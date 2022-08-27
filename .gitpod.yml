@@ -1,0 +1,23 @@
+tasks:
+  - init: echo 'init script' # runs during prebuild
+    command: echo 'start script'
+ports:
+  - port: 3000
+    onOpen: open-preview
+vscode:
+  extensions:
+    - redwan-hossain.auto-rename-tag-clone
+    - pkief.material-icon-theme
+    - tomi.xasnippets
+    - enkia.tokyo-night
+    - streetsidesoftware.code-spell-checker
+    - dbaeumer.vscode-eslint
+    - christian-kohler.path-intellisense
+    - kamikillerto.vscode-colorize
+    - styled-components.vscode-styled-components
+    - editorconfig.editorconfig
+    - esbenp.prettier-vscode
+    - usernamehw.errorlens
+    - eamodio.gitlens
+    - prisma.prisma
+    - idleberg.icon-fonts
