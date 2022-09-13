@@ -4,6 +4,14 @@
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["bulma", "NEXTAUTH", "signin", "superjson", "TRPC"],
+  "cSpell.words": [
+    "bulma",
+    "fullheight",
+    "fullwidth",
+    "NEXTAUTH",
+    "signin",
+    "superjson",
+    "TRPC"
+  ],
   "editor.guides.indentation": true
 }
