@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Styled from "styled-components";
 
 const TopBar = Styled.div`
@@ -50,7 +51,9 @@ const Index = () => {
           </ul>
         </Menu>
         <div>
-          <button className="button">Sign In</button>
+          <Link href="/auth/signin">
+            <button className="button">Sign In</button>
+          </Link>
         </div>
       </TopBar>
 
@@ -62,7 +65,9 @@ const Index = () => {
               Professional Risk management to the people
             </p>
             <p>
-              <button className="button is-light">Get Start Now</button>
+              <Link href="/auth/signin">
+                <button className="button is-light">Get Start Now</button>
+              </Link>
             </p>
           </div>
         </div>

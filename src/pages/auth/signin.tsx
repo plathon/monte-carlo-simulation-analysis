@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import Head from "next/head";
+import { string, ValidationError } from "yup";
 import {
   ClientSafeProvider,
   getProviders,
@@ -12,6 +13,11 @@ import { BuiltInProviderType } from "next-auth/providers";
 export default function SignIn() {
   const [isLoadingEmailSignIn, setIsLoadingEmailSignIn] = useState(false);
   const [isLoadingOAuthSignIn, setIsLoadingOAuthSignIn] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [emailValidationError, setEmailValidationError] = useState("");
+  const [showEmailErrors, setShowEmailErrors] = useState(false);
+
   const [csrfToken, setCsrfToken] = useState<string | undefined>();
   const [providers, setProviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
@@ -26,6 +32,38 @@ export default function SignIn() {
     });
   }, []);
 
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+    try {
+      await string()
+        .email("Invalid email address")
+        .required("Required")
+        .default("")
+        .validate(value);
+      setEmailValidationError("");
+      setShowEmailErrors(false);
+    } catch (e) {
+      if (e instanceof ValidationError && e.errors[0]) {
+        setEmailValidationError(e.errors[0]);
+      }
+    }
+  };
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    if (emailValidationError) {
+      e.preventDefault();
+    } else {
+      setIsLoadingEmailSignIn(true);
+    }
+  };
+
+  const handleBlur = () => {
+    if (emailValidationError) {
+      setShowEmailErrors(true);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -38,7 +76,7 @@ export default function SignIn() {
             <form
               method="post"
               action="/api/auth/signin/email"
-              onSubmit={() => setIsLoadingEmailSignIn(true)}
+              onSubmit={handleSubmit}
             >
               {providers
                 ? Object.values(providers).map((provider, i) =>
@@ -57,14 +95,20 @@ export default function SignIn() {
                             </span>
                             <input
                               id="email"
-                              className="input"
-                              type="email"
+                              className={`input ${
+                                showEmailErrors && "is-danger"
+                              }`}
+                              type="text"
                               name="email"
                               placeholder="Type your email address."
-                              pattern="/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/"
-                              required
+                              value={email}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
                             />
                           </div>
+                          <p className="help is-danger">
+                            {showEmailErrors && emailValidationError}
+                          </p>
                         </div>
 
                         <div className="control">
