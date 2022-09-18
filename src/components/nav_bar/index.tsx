@@ -8,6 +8,23 @@ const NavMenu = styled.div`
   margin-top: 20px;
 `;
 
+const Notifications = styled.div`
+  margin-right: 10px;
+`;
+
+const NotificationBtn = styled.button`
+  background-color: #f5f5f5 !important;
+  &:hover {
+    background-color: #efefef !important;
+  }
+`;
+
+const Tag = styled.span`
+  position: absolute;
+  left: 20px;
+  top: -6px;
+`;
+
 export default function Index() {
   useEffect(() => {
     const dropdowns = document.querySelectorAll(".dropdown:not(.is-hoverable)");
@@ -48,6 +65,41 @@ export default function Index() {
         </p>
       </div>
       <div>
+        <Notifications className="dropdown is-right is-hoverable">
+          <div className="dropdown-trigger">
+            <NotificationBtn
+              className="button is-white"
+              aria-haspopup="true"
+              aria-controls="dropdown-menu3"
+            >
+              <span className="icon is-small">
+                <i className="fas fa-bell"></i>
+              </span>
+            </NotificationBtn>
+            <Tag className="tag is-danger is-rounded">2</Tag>
+          </div>
+          <div className="dropdown-menu" id="dropdown-menu2" role="menu">
+            <div className="dropdown-content">
+              <div className="dropdown-item">
+                <p>
+                  You can insert <strong>any type of content</strong> within the
+                  dropdown menu.
+                </p>
+              </div>
+              <hr className="dropdown-divider" />
+              <div className="dropdown-item">
+                <p>
+                  You simply need to use a <code>&lt;div&gt;</code> instead.
+                </p>
+              </div>
+              <hr className="dropdown-divider" />
+              <a href="#" className="dropdown-item">
+                This is a link
+              </a>
+            </div>
+          </div>
+        </Notifications>
+
         <div className="dropdown is-right">
           <div className="dropdown-trigger">
             <button
