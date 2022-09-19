@@ -6,6 +6,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "cSpell.words": [
     "bulma",
+    "chartjs",
+    "echarts",
     "formik",
     "fullheight",
     "fullwidth",

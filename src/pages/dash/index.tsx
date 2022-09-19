@@ -2,6 +2,9 @@ import Head from "next/head";
 
 import NavBar from "../../components/nav_bar";
 
+import ExampleChart from "../../components/charts/example-chart";
+import ExampleBarChart from "../../components/charts/example-bar-chart";
+
 export default function Index() {
   return (
     <>
@@ -65,10 +68,20 @@ export default function Index() {
           </div>
         </div>
         <div className="columns">
-          <div className="column">One</div>
-          <div className="column">Two</div>
-          <div className="column">Three</div>
-          <div className="column">Four</div>
+          <div className="column is-half">
+            <ExampleChart />
+          </div>
+          <div className="column is-half">
+            <ExampleChart />
+          </div>
+        </div>
+        <div className="columns">
+          <div className="column is-half">
+            <ExampleBarChart />
+          </div>
+          <div className="column is-half">
+            <ExampleBarChart />
+          </div>
         </div>
       </div>
     </>
