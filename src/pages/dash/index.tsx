@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import NavBar from "../../components/nav_bar";
+import Menu from "../../components/menu";
 
 import ExampleChart from "../../components/charts/example-chart";
 import ExampleBarChart from "../../components/charts/example-bar-chart";
@@ -19,22 +20,7 @@ export default function Index() {
         </div>
         <div className="columns">
           <div className="column is-full">
-            <div className="tabs is-small">
-              <ul>
-                <li className="is-active">
-                  <a>Pictures</a>
-                </li>
-                <li>
-                  <a>Music</a>
-                </li>
-                <li>
-                  <a>Videos</a>
-                </li>
-                <li>
-                  <a>Documents</a>
-                </li>
-              </ul>
-            </div>
+            <Menu />
           </div>
         </div>
         <div className="columns">

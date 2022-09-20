@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 
 const NavMenu = styled.div`
@@ -26,6 +28,8 @@ const Tag = styled.span`
 `;
 
 export default function Index() {
+  const router = useRouter();
+
   useEffect(() => {
     const dropdowns = document.querySelectorAll(".dropdown:not(.is-hoverable)");
 
@@ -114,12 +118,24 @@ export default function Index() {
           </div>
           <div className="dropdown-menu" id="dropdown-menu3" role="menu">
             <div className="dropdown-content">
-              <a href="#" className="dropdown-item">
-                Home
-              </a>
-              <a href="#" className="dropdown-item">
-                Settings
-              </a>
+              <Link href="/dash">
+                <a
+                  className={`dropdown-item ${
+                    router.asPath === "/dash" ? "is-active" : ""
+                  }`}
+                >
+                  Dashboard
+                </a>
+              </Link>
+              <Link href="/settings">
+                <a
+                  className={`dropdown-item ${
+                    router.asPath === "/settings" ? "is-active" : ""
+                  }`}
+                >
+                  Settings
+                </a>
+              </Link>
               <a href="#" className="dropdown-item">
                 Docs
               </a>
