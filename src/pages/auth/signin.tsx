@@ -1,4 +1,6 @@
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import { string, ValidationError } from "yup";
 import {
@@ -11,6 +13,9 @@ import {
 import { BuiltInProviderType } from "next-auth/providers";
 
 export default function SignIn() {
+  const session = useSession();
+  const router = useRouter();
+
   const [isLoadingEmailSignIn, setIsLoadingEmailSignIn] = useState(false);
   const [isLoadingOAuthSignIn, setIsLoadingOAuthSignIn] = useState(false);
 
@@ -63,6 +68,14 @@ export default function SignIn() {
       setShowEmailErrors(true);
     }
   };
+
+  if (session.status === "loading")
+    return <div className="loader is-loading"></div>;
+
+  if (session.status === "authenticated") {
+    router.push("/dash");
+    return <div className="loader is-loading is-danger"></div>;
+  }
 
   return (
     <>

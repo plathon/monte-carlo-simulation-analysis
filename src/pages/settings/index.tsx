@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Head from "next/head";
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useFormik } from "formik";
 import { object, string } from "yup";
 import { trpc } from "../../utils/trpc";
@@ -7,23 +9,39 @@ import { trpc } from "../../utils/trpc";
 import NavBar from "../../components/nav_bar";
 
 export default function Index() {
+  const session = useSession();
+
   const [isLoadingForm, setIsLoadingForm] = useState(false);
 
-  const userMutation = trpc.useMutation(["user.updateData"]);
+  const userData = trpc.useQuery(["user.data"]);
+  const userMutation = trpc.useMutation(["user.update"]);
+
+  const { data } = userData;
+
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      signIn();
+    }
+  });
+
+  useEffect(() => {
+    if (userMutation.isLoading) {
+      setIsLoadingForm(true);
+    } else {
+      setIsLoadingForm(false);
+    }
+  }, [userMutation.isLoading]);
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      name: data?.name ? data.name : "",
     },
     validationSchema: object({
       name: string()
         .max(50, "Must be 15 characters or less")
         .required("Should not be empty"),
     }),
-    onSubmit: (values) => {
-      setIsLoadingForm(true);
-      userMutation.mutate(values);
-    },
+    onSubmit: (values) => userMutation.mutate(values),
   });
 
   return (

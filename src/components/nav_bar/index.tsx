@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 import styled from "styled-components";
 
 const NavMenu = styled.div`
@@ -36,6 +37,11 @@ export default function Index() {
     if (dropdowns.length > 0) {
       dropdowns.forEach(function (el) {
         el.addEventListener("click", function (e) {
+          if (e.target instanceof Element) {
+            if (e.target?.classList.contains("dropdown-item")) {
+              return;
+            }
+          }
           closeDropdowns();
           e.stopPropagation();
           el.classList.toggle("is-active");
@@ -69,7 +75,10 @@ export default function Index() {
         </p>
       </div>
       <div>
-        <Notifications className="dropdown is-right is-hoverable">
+        <Notifications
+          id="dropdown1"
+          className="dropdown is-right is-hoverable"
+        >
           <div className="dropdown-trigger">
             <NotificationBtn
               className="button is-white"
@@ -143,7 +152,7 @@ export default function Index() {
                 Help
               </a>
               <hr className="dropdown-divider" />
-              <a href="#" className="dropdown-item">
+              <a onClick={() => signOut()} className="dropdown-item">
                 Logout
               </a>
             </div>
