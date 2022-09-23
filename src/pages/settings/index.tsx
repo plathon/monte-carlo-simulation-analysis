@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Head from "next/head";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
@@ -11,12 +11,10 @@ import NavBar from "../../components/nav_bar";
 export default function Index() {
   const session = useSession();
 
-  const [isLoadingForm, setIsLoadingForm] = useState(false);
-
   const userData = trpc.useQuery(["user.data"]);
   const userMutation = trpc.useMutation(["user.update"]);
 
-  const { data } = userData;
+  const { data, isFetching, isFetched } = userData;
 
   useEffect(() => {
     if (session.status === "unauthenticated") {
@@ -24,17 +22,9 @@ export default function Index() {
     }
   });
 
-  useEffect(() => {
-    if (userMutation.isLoading) {
-      setIsLoadingForm(true);
-    } else {
-      setIsLoadingForm(false);
-    }
-  }, [userMutation.isLoading]);
-
   const formik = useFormik({
     initialValues: {
-      name: data?.name ? data.name : "",
+      name: "",
     },
     validationSchema: object({
       name: string()
@@ -43,6 +33,10 @@ export default function Index() {
     }),
     onSubmit: (values) => userMutation.mutate(values),
   });
+
+  useEffect(() => {
+    data?.name && formik.setFieldValue("name", data?.name);
+  }, [isFetched]);
 
   return (
     <>
@@ -87,7 +81,7 @@ export default function Index() {
             <form onSubmit={formik.handleSubmit}>
               <div className="field">
                 <label className="label">Name</label>
-                <div className="control">
+                <div className={`control ${isFetching && "is-loading"}`}>
                   <input
                     className={`input ${
                       formik.touched.name && formik.errors.name
@@ -100,6 +94,7 @@ export default function Index() {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.name}
+                    disabled={isFetching}
                   />
                 </div>
                 {formik.touched.name && formik.errors.name ? (
@@ -123,7 +118,7 @@ export default function Index() {
               <div className="control">
                 <button
                   className={`button is-dark ${
-                    isLoadingForm ? "is-loading" : ""
+                    userMutation.isLoading ? "is-loading" : ""
                   }`}
                   type="submit"
                 >
