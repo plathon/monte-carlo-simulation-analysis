@@ -3,6 +3,17 @@ import Head from "next/head";
 import NavBar from "../../../components/nav_bar";
 import Menu from "../../../components/menu";
 
+import styled from "styled-components";
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+const Table = styled.table`
+  width: 100%;
+`;
+
 export default function Index() {
   return (
     <>
@@ -17,11 +28,30 @@ export default function Index() {
         </div>
         <Menu />
         <div className="columns">
-          <div className="column is-full">
-            <table className="table is-bordered">
+          <div className="column">
+            <div className="buttons">
+              <button className="button">
+                <span className="icon is-small">
+                  <i className="fas fa-chart-line"></i>
+                </span>
+                <span>Add Trade</span>
+              </button>
+              <button className="button">
+                <span className="icon is-small">
+                  <i className="fa-regular fa-file"></i>
+                </span>
+                <span>Upload File</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="columns">
+          <div className="column">
+            <Table className="table is-bordered">
               <thead>
                 <tr>
                   <th>Date</th>
+                  <th>Symbol</th>
                   <th>Open Price</th>
                   <th>Close Price</th>
                   <th>Long/Short</th>
@@ -30,14 +60,85 @@ export default function Index() {
               </thead>
               <tbody>
                 <tr>
+                  <td>
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="Type trade datetime"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="ex: EURUSD"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="1000.00"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          className="input"
+                          type="text"
+                          placeholder="1000.50"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="field">
+                      <div className="control">
+                        <div className="select">
+                          <select>
+                            <option>Long</option>
+                            <option>Short</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="buttons">
+                      <button className="button is-small is-link">
+                        <i className="fa fa-check"></i>
+                      </button>
+                      <button className="button is-small">
+                        <i className="fa fa-xmark"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
                   <td>13/12/2021</td>
+                  <td>EURUSD</td>
                   <td>1009.50</td>
                   <td>1009.00</td>
-                  <td>L</td>
+                  <td>Long</td>
                   <td>
-                    <button className="button is-small">
-                      <i className="fa fa-xmark"></i>
-                    </button>
+                    <div className="buttons">
+                      <button className="button is-small">
+                        <i className="fa fa-xmark"></i>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -46,55 +147,20 @@ export default function Index() {
                   <th>Team</th>
                 </tr>
               </tfoot>
-            </table>
+            </Table>
           </div>
         </div>
         <div className="columns">
-          <div className="column is-full">
+          <PaginationContainer className="column is-half is-offset-one-quarter">
             <nav
-              className="pagination is-rounded"
+              className="pagination is-small"
               role="navigation"
               aria-label="pagination"
             >
-              <ul className="pagination-list">
-                <li>
-                  <a className="pagination-link" aria-label="Goto page 1">
-                    1
-                  </a>
-                </li>
-                <li>
-                  <span className="pagination-ellipsis">&hellip;</span>
-                </li>
-                <li>
-                  <a className="pagination-link" aria-label="Goto page 45">
-                    45
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className="pagination-link is-current"
-                    aria-label="Page 46"
-                    aria-current="page"
-                  >
-                    46
-                  </a>
-                </li>
-                <li>
-                  <a className="pagination-link" aria-label="Goto page 47">
-                    47
-                  </a>
-                </li>
-                <li>
-                  <span className="pagination-ellipsis">&hellip;</span>
-                </li>
-                <li>
-                  <a className="pagination-link" aria-label="Goto page 86">
-                    86
-                  </a>
-                </li>
-              </ul>
+              <a className="pagination-previous">Previous</a>
+              <a className="pagination-next">Next page</a>
             </nav>
-          </div>
+          </PaginationContainer>
         </div>
       </div>
     </>

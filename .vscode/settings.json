@@ -15,7 +15,8 @@
     "NEXTAUTH",
     "signin",
     "superjson",
-    "TRPC"
+    "TRPC",
+    "xmark"
   ],
   "editor.guides.indentation": true
 }
