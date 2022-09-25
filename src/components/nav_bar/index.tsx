@@ -16,7 +16,6 @@ const Notifications = styled.div`
 `;
 
 const NotificationBtn = styled.button`
-  background-color: #f5f5f5 !important;
   &:hover {
     background-color: #efefef !important;
   }
@@ -136,10 +135,10 @@ export default function Index() {
                   Dashboard
                 </a>
               </Link>
-              <Link href="/settings">
+              <Link href="dash/settings">
                 <a
                   className={`dropdown-item ${
-                    router.asPath === "/settings" ? "is-active" : ""
+                    router.asPath === "/dash/settings" ? "is-active" : ""
                   }`}
                 >
                   Settings

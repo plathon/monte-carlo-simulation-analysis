@@ -18,11 +18,7 @@ export default function Index() {
             <NavBar />
           </div>
         </div>
-        <div className="columns">
-          <div className="column is-full">
-            <Menu />
-          </div>
-        </div>
+        <Menu />
         <div className="columns">
           <div className="column is-full">
             <nav className="level is-mobile">
