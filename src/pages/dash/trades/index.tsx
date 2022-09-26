@@ -14,6 +14,14 @@ const Table = styled.table`
   width: 100%;
 `;
 
+const Input = styled.input`
+  max-width: 180px;
+`;
+
+const TableContainer = styled.div`
+  overflow-x: auto;
+`;
+
 export default function Index() {
   return (
     <>
@@ -46,7 +54,7 @@ export default function Index() {
           </div>
         </div>
         <div className="columns">
-          <div className="column">
+          <TableContainer className="column">
             <Table className="table is-bordered">
               <thead>
                 <tr>
@@ -63,7 +71,7 @@ export default function Index() {
                   <td>
                     <div className="field">
                       <div className="control">
-                        <input
+                        <Input
                           className="input"
                           type="text"
                           placeholder="Type trade datetime"
@@ -74,7 +82,7 @@ export default function Index() {
                   <td>
                     <div className="field">
                       <div className="control">
-                        <input
+                        <Input
                           className="input"
                           type="text"
                           placeholder="ex: EURUSD"
@@ -85,7 +93,7 @@ export default function Index() {
                   <td>
                     <div className="field">
                       <div className="control">
-                        <input
+                        <Input
                           className="input"
                           type="text"
                           placeholder="1000.00"
@@ -96,7 +104,7 @@ export default function Index() {
                   <td>
                     <div className="field">
                       <div className="control">
-                        <input
+                        <Input
                           className="input"
                           type="text"
                           placeholder="1000.50"
@@ -148,7 +156,7 @@ export default function Index() {
                 </tr>
               </tfoot>
             </Table>
-          </div>
+          </TableContainer>
         </div>
         <div className="columns">
           <PaginationContainer className="column is-half is-offset-one-quarter">
