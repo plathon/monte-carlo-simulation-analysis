@@ -1,4 +1,9 @@
 import Link from "next/link";
+import styled from "styled-components";
+
+const Workspace = styled.span`
+  margin-bottom: 6px;
+`;
 
 export default function Menu() {
   return (
@@ -20,6 +25,9 @@ export default function Menu() {
         </div>
         <div className="column">
           <p className="buttons is-right">
+            <Workspace className="tag is-white">
+              <strong>WORKSPACES: </strong>
+            </Workspace>
             <Link href="dash/trades">
               <button className="button is-rounded">Trades</button>
             </Link>
