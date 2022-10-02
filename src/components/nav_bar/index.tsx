@@ -135,7 +135,7 @@ export default function Index() {
                   Dashboard
                 </a>
               </Link>
-              <Link href="dash/settings">
+              <Link href="/dash/settings">
                 <a
                   className={`dropdown-item ${
                     router.asPath === "/dash/settings" ? "is-active" : ""

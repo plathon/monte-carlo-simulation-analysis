@@ -32,6 +32,9 @@ export default function Menu() {
               <button className="button is-rounded">Trades</button>
             </Link>
             <button className="button is-rounded">
+              <i className="fa-regular fa-plus"></i>
+            </button>
+            <button className="button is-rounded">
               <span className="icon is-small">
                 <i className="fa fa-sliders"></i>
               </span>
