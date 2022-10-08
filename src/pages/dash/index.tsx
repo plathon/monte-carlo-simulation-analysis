@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { trpc } from "../../utils/trpc";
 
 import NavBar from "../../components/nav_bar";
 import Menu from "../../components/menu";
@@ -7,6 +8,9 @@ import ExampleChart from "../../components/charts/example-chart";
 import ExampleBarChart from "../../components/charts/example-bar-chart";
 
 export default function Index() {
+  const workspace = trpc.useQuery(["workspace.list"]);
+  const { data: workspaces, isLoading: isLoadingWorkspaces } = workspace;
+
   return (
     <>
       <Head>
@@ -18,7 +22,10 @@ export default function Index() {
             <NavBar />
           </div>
         </div>
-        <Menu />
+        <Menu
+          isLoadingWorkspaces={isLoadingWorkspaces}
+          workspaces={workspaces || []}
+        />
         <div className="columns">
           <div className="column is-full">
             <nav className="level is-mobile">

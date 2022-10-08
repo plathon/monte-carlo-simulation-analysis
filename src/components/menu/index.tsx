@@ -5,7 +5,19 @@ const Workspace = styled.span`
   margin-bottom: 6px;
 `;
 
-export default function Menu() {
+type Workspace = {
+  id: string;
+  name: string;
+  ownerId: string;
+};
+
+type MenuProps = {
+  isLoadingWorkspaces: boolean;
+  workspaces: Workspace[];
+};
+
+export default function Menu(props: MenuProps) {
+  const { isLoadingWorkspaces, workspaces } = props;
   return (
     <>
       <div className="columns">
@@ -28,12 +40,24 @@ export default function Menu() {
             <Workspace className="tag is-white">
               <strong>WORKSPACES: </strong>
             </Workspace>
-            <Link href="dash/trades">
-              <button className="button is-rounded">Trades</button>
-            </Link>
-            <button className="button is-rounded">
-              <i className="fa-regular fa-plus"></i>
-            </button>
+            {isLoadingWorkspaces && (
+              <button className="button is-rounded is-loading disabled"></button>
+            )}
+            {!isLoadingWorkspaces && (
+              <>
+                {workspaces.map((workspace) => (
+                  <Link href="dash/trades" key={workspace.id}>
+                    <button className="button is-rounded">
+                      {workspace.name.charAt(0).toUpperCase() +
+                        workspace.name.slice(1)}
+                    </button>
+                  </Link>
+                ))}
+                <button className="button is-rounded">
+                  <i className="fa-regular fa-plus"></i>
+                </button>
+              </>
+            )}
             <button className="button is-rounded">
               <span className="icon is-small">
                 <i className="fa fa-sliders"></i>

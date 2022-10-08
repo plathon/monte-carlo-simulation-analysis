@@ -6,13 +6,15 @@ import { exampleRouter } from "./example";
 import { protectedExampleRouter } from "./protected-example-router";
 import { userRoutes } from "./user";
 import { tradeRoutes } from "./trade";
+import { workspaceRoutes } from "./workspace";
 
 export const appRouter = createRouter()
   .transformer(superjson)
   .merge("example.", exampleRouter)
   .merge("auth.", protectedExampleRouter)
   .merge("user.", userRoutes)
-  .merge("trade.", tradeRoutes);
+  .merge("trade.", tradeRoutes)
+  .merge("workspace.", workspaceRoutes);
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
