@@ -67,11 +67,17 @@ model Workspace {
 
 model Trade {
     id String @id @default(cuid())
-    symbol String
+    symbol String?
+    side Side @default(BUY)
     open_price Decimal @db.Decimal(10,2)
     close_price Decimal @db.Decimal(10,2)
     begin_at DateTime?
     end_at DateTime?
     workspace Workspace @relation(fields: [workspaceId], references: [id])
     workspaceId String
+}
+
+enum Side {
+    BUY
+    SELL
 }

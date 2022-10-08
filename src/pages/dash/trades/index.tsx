@@ -1,9 +1,11 @@
 import Head from "next/head";
 import { useFormik } from "formik";
-import { object, string, number } from "yup";
+import { object, string, number, mixed } from "yup";
 
 import NavBar from "../../../components/nav_bar";
 import Menu from "../../../components/menu";
+
+import { trpc } from "../../../utils/trpc";
 
 import styled from "styled-components";
 
@@ -14,7 +16,6 @@ const PaginationContainer = styled.div`
 
 const Table = styled.table`
   width: 100%;
-  text-align: center;
 `;
 
 const Input = styled.input`
@@ -26,20 +27,31 @@ const TableContainer = styled.div`
 `;
 
 export default function Index() {
+  const { data } = trpc.useQuery(["trade.list"]);
+  const tradeMutation = trpc.useMutation(["trade.create"]);
+  console.log(tradeMutation.error);
   const formik = useFormik({
     initialValues: {
-      date: "",
       symbol: "",
       open_price: "",
       close_price: "",
-      side: "S",
+      begin_at: "",
+      end_at: "",
+      side: "BUY",
     },
     validationSchema: object({
       open_price: number().required(),
       close_price: number().required(),
-      side: string().required(),
+      side: mixed().oneOf(["BUY", "SELL"]),
     }),
-    onSubmit: (data) => console.log(data),
+    onSubmit: (data) => {
+      const { open_price, close_price, side } = data;
+      tradeMutation.mutate({
+        open_price: Number(open_price),
+        close_price: Number(close_price),
+        side: side === "SELL" ? "SELL" : "BUY",
+      });
+    },
   });
   return (
     <>
@@ -71,35 +83,17 @@ export default function Index() {
               <Table className="table is-bordered">
                 <thead>
                   <tr>
-                    <th>Date</th>
                     <th>Symbol</th>
                     <th>Open Price</th>
                     <th>Close Price</th>
-                    <th>Long/Short</th>
+                    <th>Open DateTime</th>
+                    <th>Close DateTime</th>
+                    <th>Side</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>
-                      <div className="field">
-                        <div className="control">
-                          <Input
-                            className={`input ${
-                              formik.touched.date && formik.errors.date
-                                ? "is-danger"
-                                : ""
-                            }`}
-                            type="text"
-                            placeholder="Type trade datetime"
-                            name="date"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            value={formik.values.date}
-                          />
-                        </div>
-                      </div>
-                    </td>
                     <td>
                       <div className="field">
                         <div className="control">
@@ -162,6 +156,44 @@ export default function Index() {
                     <td>
                       <div className="field">
                         <div className="control">
+                          <Input
+                            className={`input ${
+                              formik.touched.begin_at && formik.errors.begin_at
+                                ? "is-danger"
+                                : ""
+                            }`}
+                            type="text"
+                            placeholder="Type trade datetime"
+                            name="begin_at"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.begin_at}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="field">
+                        <div className="control">
+                          <Input
+                            className={`input ${
+                              formik.touched.end_at && formik.errors.end_at
+                                ? "is-danger"
+                                : ""
+                            }`}
+                            type="text"
+                            placeholder="Type close trade datetime"
+                            name="end_at"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.end_at}
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="field">
+                        <div className="control">
                           <div
                             className={`select ${
                               formik.touched.side && formik.errors.side
@@ -177,8 +209,8 @@ export default function Index() {
                               onBlur={formik.handleBlur}
                               value={formik.values.side}
                             >
-                              <option value="L">Long</option>
-                              <option value="S">Short</option>
+                              <option value="BUY">Long</option>
+                              <option value="SELL">Short</option>
                             </select>
                           </div>
                         </div>
@@ -186,35 +218,34 @@ export default function Index() {
                     </td>
                     <td>
                       <div className="buttons">
-                        <button className="button is-small is-link">
+                        <button
+                          className={`button is-small is-link ${
+                            tradeMutation.isLoading && "is-loading"
+                          }`}
+                        >
                           <i className="fa fa-check"></i>
                         </button>
-                        <button className="button is-small">
-                          <i className="fa fa-xmark"></i>
-                        </button>
                       </div>
                     </td>
                   </tr>
-                  <tr>
-                    <td>13/12/2021</td>
-                    <td>EURUSD</td>
-                    <td>1009.50</td>
-                    <td>1009.00</td>
-                    <td>Long</td>
-                    <td>
-                      <div className="buttons">
-                        <button className="button is-small">
-                          <i className="fa fa-xmark"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                  {data?.map((data) => (
+                    <tr key={data.id}>
+                      <td>{data.symbol}</td>
+                      <td>{data.open_price.toString()}</td>
+                      <td>{data.close_price.toString()}</td>
+                      <td>{data.begin_at?.toDateString()}</td>
+                      <td>{data.end_at?.toDateString()}</td>
+                      <td>{data.side}</td>
+                      <td>
+                        <div className="buttons">
+                          <button className="button is-small">
+                            <i className="fa fa-xmark"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
-                <tfoot>
-                  <tr>
-                    <th>Team</th>
-                  </tr>
-                </tfoot>
               </Table>
             </form>
           </TableContainer>
