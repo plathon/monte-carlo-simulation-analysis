@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useFormik } from "formik";
-import { object, string, number, mixed } from "yup";
+import { object, number, mixed } from "yup";
 
 import NavBar from "../../../components/nav_bar";
 import Menu from "../../../components/menu";
@@ -27,9 +27,12 @@ const TableContainer = styled.div`
 `;
 
 export default function Index() {
-  const { data } = trpc.useQuery(["trade.list"]);
+  const { data: tradeList } = trpc.useQuery(["trade.list"]);
+  const { isLoading: isLoadingWorkspaces, data: workspaces } = trpc.useQuery([
+    "workspace.list",
+  ]);
   const tradeMutation = trpc.useMutation(["trade.create"]);
-  console.log(tradeMutation.error);
+
   const formik = useFormik({
     initialValues: {
       symbol: "",
@@ -64,7 +67,10 @@ export default function Index() {
             <NavBar />
           </div>
         </div>
-        <Menu />
+        <Menu
+          isLoadingWorkspaces={isLoadingWorkspaces}
+          workspaces={workspaces || []}
+        />
         <div className="columns">
           <div className="column">
             <div className="buttons">
@@ -228,14 +234,14 @@ export default function Index() {
                       </div>
                     </td>
                   </tr>
-                  {data?.map((data) => (
-                    <tr key={data.id}>
-                      <td>{data.symbol}</td>
-                      <td>{data.open_price.toString()}</td>
-                      <td>{data.close_price.toString()}</td>
-                      <td>{data.begin_at?.toDateString()}</td>
-                      <td>{data.end_at?.toDateString()}</td>
-                      <td>{data.side}</td>
+                  {tradeList?.map((tarde) => (
+                    <tr key={tarde.id}>
+                      <td>{tarde.symbol}</td>
+                      <td>{tarde.open_price.toString()}</td>
+                      <td>{tarde.close_price.toString()}</td>
+                      <td>{tarde.begin_at?.toDateString()}</td>
+                      <td>{tarde.end_at?.toDateString()}</td>
+                      <td>{tarde.side}</td>
                       <td>
                         <div className="buttons">
                           <button className="button is-small">
