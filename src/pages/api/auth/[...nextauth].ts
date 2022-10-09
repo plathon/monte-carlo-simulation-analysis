@@ -12,6 +12,34 @@ export const authOptions: NextAuthOptions = {
   },
   debug: env.NODE_ENV !== "production",
   callbacks: {
+    async signIn({ user }) {
+      const workspaces = await prisma.user
+        .findUnique({
+          where: {
+            id: user.id,
+          },
+        })
+        .workspaces({
+          where: {
+            name: "default",
+          },
+        });
+
+      if (!workspaces.length) {
+        await prisma.workspace.create({
+          data: {
+            name: "default",
+            owner: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+        });
+      }
+
+      return true;
+    },
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
