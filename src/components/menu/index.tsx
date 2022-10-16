@@ -61,9 +61,11 @@ export default function Menu(props: MenuProps) {
                     </button>
                   </Link>
                 ))}
-                <button className="button is-rounded">
-                  <i className="fa-regular fa-plus"></i>
-                </button>
+                <Link href="/workspace/create">
+                  <button className="button is-rounded">
+                    <i className="fa-regular fa-plus"></i>
+                  </button>
+                </Link>
               </>
             )}
             {workspace && (
