@@ -44,6 +44,7 @@ export default function CreateWorkspace() {
         <Menu
           isLoadingWorkspaces={isLoadingWorkspaces}
           workspaces={workspaces || []}
+          isCreateWorkspaceActive
         />
         <div className="columns">
           <div className="column">

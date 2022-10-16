@@ -22,6 +22,8 @@ type MenuProps = {
   isLoadingWorkspaces: boolean;
   workspaces: Workspace[];
   workspace?: Workspace | undefined;
+  isSettingsActive?: boolean;
+  isCreateWorkspaceActive?: boolean;
 };
 
 export default function Menu(props: MenuProps) {
@@ -29,6 +31,8 @@ export default function Menu(props: MenuProps) {
     isLoadingWorkspaces,
     workspaces,
     workspace: currentWorkspace,
+    isSettingsActive,
+    isCreateWorkspaceActive,
   } = props;
   useEffect(() => {
     tippy("#createWorkspace", {
@@ -83,7 +87,12 @@ export default function Menu(props: MenuProps) {
                   </Link>
                 ))}
                 <Link href="/workspace/create">
-                  <button id="createWorkspace" className="button is-rounded">
+                  <button
+                    id="createWorkspace"
+                    className={`button is-rounded ${
+                      isCreateWorkspaceActive && "is-dark"
+                    }`}
+                  >
                     <i className="fa-regular fa-plus"></i>
                   </button>
                 </Link>
@@ -91,7 +100,12 @@ export default function Menu(props: MenuProps) {
             )}
             {currentWorkspace && (
               <Link href={`/workspace/${currentWorkspace.name}/trades`}>
-                <button id="workspaceSettings" className="button is-rounded">
+                <button
+                  id="workspaceSettings"
+                  className={`button is-rounded ${
+                    isSettingsActive && "is-dark"
+                  }`}
+                >
                   <span className="icon is-small">
                     <i className="fa fa-sliders"></i>
                   </span>

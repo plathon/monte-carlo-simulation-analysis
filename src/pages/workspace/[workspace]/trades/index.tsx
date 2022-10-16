@@ -9,6 +9,7 @@ import Menu from "../../../../components/menu";
 import { trpc } from "../../../../utils/trpc";
 
 import styled from "styled-components";
+import Link from "next/link";
 
 const Header = styled.div`
   display: flex;
@@ -93,6 +94,7 @@ export default function Index() {
           isLoadingWorkspaces={isLoadingWorkspaces}
           workspaces={workspaces || []}
           workspace={workspace}
+          isSettingsActive
         />
         {isLoadingTrades && (
           <LoadingContainer>
@@ -104,21 +106,28 @@ export default function Index() {
             <div className="columns">
               <div className="column">
                 <Header>
-                  <nav className="breadcrumb is-small" aria-label="breadcrumbs">
-                    <ul>
-                      <li className="is-active">
-                        <a href="#">Workspace</a>
-                      </li>
-                      <li>
-                        <a href="#">Default</a>
-                      </li>
-                      <li className="is-active">
-                        <a href="#" aria-current="page">
-                          Trades
-                        </a>
-                      </li>
-                    </ul>
-                  </nav>
+                  {workspace && (
+                    <nav
+                      className="breadcrumb is-small"
+                      aria-label="breadcrumbs"
+                    >
+                      <ul>
+                        <li className="is-active">
+                          <a href="#">Workspace</a>
+                        </li>
+                        <li>
+                          <Link href={`/workspace/${workspace.name}`}>
+                            <a>{workspace.name}</a>
+                          </Link>
+                        </li>
+                        <li className="is-active">
+                          <a href="#" aria-current="page">
+                            Trades
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                  )}
                   <div className="buttons">
                     <button className="button">
                       <span className="icon is-small">
