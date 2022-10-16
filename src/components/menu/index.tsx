@@ -1,5 +1,8 @@
+import { useEffect } from "react";
 import Link from "next/link";
+import tippy from "tippy.js";
 import styled from "styled-components";
+import "tippy.js/dist/tippy.css";
 
 const Workspace = styled.span`
   margin-bottom: 6px;
@@ -22,7 +25,21 @@ type MenuProps = {
 };
 
 export default function Menu(props: MenuProps) {
-  const { isLoadingWorkspaces, workspaces, workspace } = props;
+  const {
+    isLoadingWorkspaces,
+    workspaces,
+    workspace: currentWorkspace,
+  } = props;
+  useEffect(() => {
+    tippy("#createWorkspace", {
+      content: "Create a new workspace",
+      placement: "bottom",
+    });
+    tippy("#workspaceSettings", {
+      content: "Add trades to workspace",
+      placement: "bottom",
+    });
+  });
   return (
     <>
       <div className="columns">
@@ -55,22 +72,26 @@ export default function Menu(props: MenuProps) {
                     href={`/workspace/${workspace.name}`}
                     key={workspace.id}
                   >
-                    <button className="button is-rounded">
+                    <button
+                      className={`button is-rounded ${
+                        workspace.id === currentWorkspace?.id && "is-dark"
+                      }`}
+                    >
                       {workspace.name.charAt(0).toUpperCase() +
                         workspace.name.slice(1)}
                     </button>
                   </Link>
                 ))}
                 <Link href="/workspace/create">
-                  <button className="button is-rounded">
+                  <button id="createWorkspace" className="button is-rounded">
                     <i className="fa-regular fa-plus"></i>
                   </button>
                 </Link>
               </>
             )}
-            {workspace && (
-              <Link href={`/workspace/${workspace.name}/trades`}>
-                <button className="button is-rounded">
+            {currentWorkspace && (
+              <Link href={`/workspace/${currentWorkspace.name}/trades`}>
+                <button id="workspaceSettings" className="button is-rounded">
                   <span className="icon is-small">
                     <i className="fa fa-sliders"></i>
                   </span>

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useFormik } from "formik";
+import { useRouter } from "next/router";
 import { object, number, mixed } from "yup";
 
 import NavBar from "../../../../components/nav_bar";
@@ -41,6 +42,8 @@ const TableContainer = styled.div`
 `;
 
 export default function Index() {
+  const router = useRouter();
+  const { workspace: workspaceParam } = router.query;
   const { isLoading: isLoadingTrades, data: tradeList } = trpc.useQuery([
     "trade.list",
   ]);
@@ -48,6 +51,9 @@ export default function Index() {
     "workspace.list",
   ]);
   const tradeMutation = trpc.useMutation(["trade.create"]);
+  const workspace = workspaces?.find(
+    (workspaceItem) => workspaceItem.name === workspaceParam
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -86,6 +92,7 @@ export default function Index() {
         <Menu
           isLoadingWorkspaces={isLoadingWorkspaces}
           workspaces={workspaces || []}
+          workspace={workspace}
         />
         {isLoadingTrades && (
           <LoadingContainer>
