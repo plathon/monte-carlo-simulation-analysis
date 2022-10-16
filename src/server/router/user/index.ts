@@ -13,7 +13,10 @@ export const userRoutes = createProtectedRouter()
     async resolve({ ctx, input }) {
       const { id } = ctx.session.user;
       const { name } = input;
-      ctx.prisma.user.update({ where: { id }, data: { name } });
-      return { name };
+      const result = await ctx.prisma.user.update({
+        where: { id },
+        data: { name },
+      });
+      return { id: result.id };
     },
   });

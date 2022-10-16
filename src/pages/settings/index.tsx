@@ -95,7 +95,6 @@ export default function Index() {
                     }`}
                     name="name"
                     type="text"
-                    placeholder="Text input"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.name}
@@ -115,6 +114,7 @@ export default function Index() {
                     name="email"
                     type="email"
                     placeholder="Ex: example@example.com"
+                    value={data?.email || ""}
                     disabled
                   />
                 </div>
