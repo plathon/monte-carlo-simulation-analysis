@@ -15,4 +15,13 @@ function defineNextConfig(config) {
 export default defineNextConfig({
   reactStrictMode: true,
   swcMinify: true,
+  async redirects() {
+    return [
+      {
+        source: "/workspace",
+        destination: "/workspace/default",
+        permanent: false,
+      },
+    ];
+  },
 });
