@@ -64,6 +64,9 @@ export default function Index() {
                 <li>
                   <a className="is-active">Profile</a>
                 </li>
+                <li>
+                  <a>Workspaces</a>
+                </li>
               </ul>
               <p className="menu-label">Transactions</p>
               <ul className="menu-list">
