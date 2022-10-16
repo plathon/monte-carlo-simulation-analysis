@@ -1,16 +1,21 @@
 import Head from "next/head";
-import { trpc } from "../../utils/trpc";
+import { useRouter } from "next/router";
+import { trpc } from "../../../utils/trpc";
 
-import NavBar from "../../components/nav_bar";
-import Menu from "../../components/menu";
+import NavBar from "../../../components/nav_bar";
+import Menu from "../../../components/menu";
 
-import ExampleChart from "../../components/charts/example-chart";
-import ExampleBarChart from "../../components/charts/example-bar-chart";
+import ExampleChart from "../../../components/charts/example-chart";
+import ExampleBarChart from "../../../components/charts/example-bar-chart";
 
 export default function Index() {
-  const workspace = trpc.useQuery(["workspace.list"]);
-  const { data: workspaces, isLoading: isLoadingWorkspaces } = workspace;
-
+  const router = useRouter();
+  const { workspace: workspaceParam } = router.query;
+  const workspaceQuery = trpc.useQuery(["workspace.list"]);
+  const { data: workspaces, isLoading: isLoadingWorkspaces } = workspaceQuery;
+  const workspace = workspaces?.find(
+    (workspace) => workspace.name === workspaceParam
+  );
   return (
     <>
       <Head>
@@ -25,6 +30,7 @@ export default function Index() {
         <Menu
           isLoadingWorkspaces={isLoadingWorkspaces}
           workspaces={workspaces || []}
+          workspace={workspace}
         />
         <div className="columns">
           <div className="column is-full">

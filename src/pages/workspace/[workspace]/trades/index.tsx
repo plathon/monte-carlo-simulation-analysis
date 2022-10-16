@@ -2,12 +2,21 @@ import Head from "next/head";
 import { useFormik } from "formik";
 import { object, number, mixed } from "yup";
 
-import NavBar from "../../../components/nav_bar";
-import Menu from "../../../components/menu";
+import NavBar from "../../../../components/nav_bar";
+import Menu from "../../../../components/menu";
 
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../../../utils/trpc";
 
 import styled from "styled-components";
+
+const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .breadcrumb {
+    margin-bottom: 0;
+  }
+`;
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -87,14 +96,31 @@ export default function Index() {
           <>
             <div className="columns">
               <div className="column">
-                <div className="buttons">
-                  <button className="button is-link">
-                    <span className="icon is-small">
-                      <i className="fas fa-chart-line"></i>
-                    </span>
-                    <span>File Upload</span>
-                  </button>
-                </div>
+                <Header>
+                  <nav className="breadcrumb is-small" aria-label="breadcrumbs">
+                    <ul>
+                      <li className="is-active">
+                        <a href="#">Workspace</a>
+                      </li>
+                      <li>
+                        <a href="#">Default</a>
+                      </li>
+                      <li className="is-active">
+                        <a href="#" aria-current="page">
+                          Trades
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                  <div className="buttons">
+                    <button className="button">
+                      <span className="icon is-small">
+                        <i className="fas fa-chart-line"></i>
+                      </span>
+                      <span>File Upload</span>
+                    </button>
+                  </div>
+                </Header>
               </div>
             </div>
             <div className="columns">
@@ -252,14 +278,14 @@ export default function Index() {
                           </div>
                         </td>
                       </tr>
-                      {tradeList?.map((tarde) => (
-                        <tr key={tarde.id}>
-                          <td>{tarde.symbol}</td>
-                          <td>{tarde.open_price.toString()}</td>
-                          <td>{tarde.close_price.toString()}</td>
-                          <td>{tarde.begin_at?.toDateString()}</td>
-                          <td>{tarde.end_at?.toDateString()}</td>
-                          <td>{tarde.side}</td>
+                      {tradeList?.map((trade) => (
+                        <tr key={trade.id}>
+                          <td>{trade.symbol}</td>
+                          <td>{trade.open_price.toString()}</td>
+                          <td>{trade.close_price.toString()}</td>
+                          <td>{trade.begin_at?.toDateString()}</td>
+                          <td>{trade.end_at?.toDateString()}</td>
+                          <td>{trade.side}</td>
                           <td>
                             <div className="buttons">
                               <button className="button is-small">

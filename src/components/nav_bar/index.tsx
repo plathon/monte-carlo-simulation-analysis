@@ -126,19 +126,19 @@ export default function Index() {
           </div>
           <div className="dropdown-menu" id="dropdown-menu3" role="menu">
             <div className="dropdown-content">
-              <Link href="/dash">
+              <Link href="/workspace/default">
                 <a
                   className={`dropdown-item ${
-                    router.asPath === "/dash" ? "is-active" : ""
+                    router.asPath === "/workspace/default" ? "is-active" : ""
                   }`}
                 >
-                  Dashboard
+                  Home
                 </a>
               </Link>
-              <Link href="/dash/settings">
+              <Link href="/settings">
                 <a
                   className={`dropdown-item ${
-                    router.asPath === "/dash/settings" ? "is-active" : ""
+                    router.asPath === "/settings" ? "is-active" : ""
                   }`}
                 >
                   Settings

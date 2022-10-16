@@ -4,9 +4,9 @@ import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useFormik } from "formik";
 import { object, string } from "yup";
-import { trpc } from "../../../utils/trpc";
+import { trpc } from "../../utils/trpc";
 
-import NavBar from "../../../components/nav_bar";
+import NavBar from "../../components/nav_bar";
 
 export default function Index() {
   const session = useSession();

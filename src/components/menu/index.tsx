@@ -5,6 +5,10 @@ const Workspace = styled.span`
   margin-bottom: 6px;
 `;
 
+const Hr = styled.hr`
+  margin: 0.5 rem 0;
+`;
+
 type Workspace = {
   id: string;
   name: string;
@@ -14,10 +18,11 @@ type Workspace = {
 type MenuProps = {
   isLoadingWorkspaces: boolean;
   workspaces: Workspace[];
+  workspace?: Workspace | undefined;
 };
 
 export default function Menu(props: MenuProps) {
-  const { isLoadingWorkspaces, workspaces } = props;
+  const { isLoadingWorkspaces, workspaces, workspace } = props;
   return (
     <>
       <div className="columns">
@@ -46,7 +51,10 @@ export default function Menu(props: MenuProps) {
             {!isLoadingWorkspaces && (
               <>
                 {workspaces.map((workspace) => (
-                  <Link href="dash/trades" key={workspace.id}>
+                  <Link
+                    href={`/workspace/${workspace.name}`}
+                    key={workspace.id}
+                  >
                     <button className="button is-rounded">
                       {workspace.name.charAt(0).toUpperCase() +
                         workspace.name.slice(1)}
@@ -58,17 +66,21 @@ export default function Menu(props: MenuProps) {
                 </button>
               </>
             )}
-            <button className="button is-rounded">
-              <span className="icon is-small">
-                <i className="fa fa-sliders"></i>
-              </span>
-            </button>
+            {workspace && (
+              <Link href={`/workspace/${workspace.name}/trades`}>
+                <button className="button is-rounded">
+                  <span className="icon is-small">
+                    <i className="fa fa-sliders"></i>
+                  </span>
+                </button>
+              </Link>
+            )}
           </p>
         </div>
       </div>
       <div className="columns">
         <div className="column">
-          <hr />
+          <Hr />
         </div>
       </div>
     </>
