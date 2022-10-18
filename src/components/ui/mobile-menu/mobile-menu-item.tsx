@@ -5,10 +5,10 @@ type Props = {
 } & JSX.IntrinsicElements["a"];
 
 export function MobileMenuItem(props: Props) {
-  const { children, className, isActive } = props;
+  const { children, className, isActive, ...rest } = props;
   return (
     <a
-      {...props}
+      {...rest}
       className={`dropdown-item ${className} ${isActive && "is-active"}`}
     >
       {children}
