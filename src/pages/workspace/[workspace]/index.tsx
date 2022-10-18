@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
 
-import NavBar from "../../../components/nav_bar";
+import TopBar from "../../../components/top_bar";
 import Menu from "../../../components/menu";
 
 import ExampleChart from "../../../components/charts/example-chart";
@@ -24,7 +24,7 @@ export default function Index() {
       <div className="container is-widescreen">
         <div className="columns">
           <div className="column is-full">
-            <NavBar />
+            <TopBar />
           </div>
         </div>
         <Menu

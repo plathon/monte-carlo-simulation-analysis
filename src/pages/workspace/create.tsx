@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { object, string } from "yup";
 import Menu from "../../components/menu";
 
-import NavBar from "../../components/nav_bar";
+import TopBar from "../../components/top_bar";
 import { trpc } from "../../utils/trpc";
 
 export default function CreateWorkspace() {
@@ -38,7 +38,7 @@ export default function CreateWorkspace() {
       <div className="container is-widescreen">
         <div className="columns">
           <div className="column is-full">
-            <NavBar />
+            <TopBar />
           </div>
         </div>
         <Menu

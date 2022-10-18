@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import { object, string } from "yup";
 import { trpc } from "../../utils/trpc";
 
-import NavBar from "../../components/nav_bar";
+import TopBar from "../../components/top_bar";
 
 export default function Index() {
   const session = useSession();
@@ -48,7 +48,7 @@ export default function Index() {
       <div className="container is-widescreen">
         <div className="columns">
           <div className="column is-full">
-            <NavBar />
+            <TopBar />
           </div>
         </div>
         <div className="columns">

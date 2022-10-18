@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { useRouter } from "next/router";
 import { object, number, mixed } from "yup";
 
-import NavBar from "../../../../components/nav_bar";
+import TopBar from "../../../../components/top_bar";
 import Menu from "../../../../components/menu";
 
 import { trpc } from "../../../../utils/trpc";
@@ -87,7 +87,7 @@ export default function Index() {
       <div className="container is-widescreen">
         <div className="columns">
           <div className="column is-full">
-            <NavBar />
+            <TopBar />
           </div>
         </div>
         <Menu
