@@ -73,7 +73,7 @@ export default function SignIn() {
     return <div className="loader is-loading"></div>;
 
   if (session.status === "authenticated") {
-    router.push("/dash");
+    router.push("/workspace/default");
     return <div className="loader is-loading is-danger"></div>;
   }
 
