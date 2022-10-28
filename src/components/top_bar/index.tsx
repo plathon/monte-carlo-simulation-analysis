@@ -81,12 +81,12 @@ export default function Index() {
           </NotificationItem>
         </Notification>
         <MobileMenu>
-          <Link href="/workspace/default">
+          <Link href="/workspace/default" passHref legacyBehavior>
             <MobileMenuItem isActive={router.asPath === "/workspace/default"}>
               Workspaces
             </MobileMenuItem>
           </Link>
-          <Link href="/settings">
+          <Link href="/settings" passHref legacyBehavior>
             <MobileMenuItem isActive={router.asPath === "/settings"}>
               Settings
             </MobileMenuItem>

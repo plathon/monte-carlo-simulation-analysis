@@ -1,17 +1,21 @@
-type Props = {
+import { forwardRef } from "react";
+
+export type MobileMenuItemProps = {
   children: string;
   className?: string;
   isActive?: boolean;
 } & JSX.IntrinsicElements["a"];
 
-export function MobileMenuItem(props: Props) {
-  const { children, className, isActive, ...rest } = props;
+export const MobileMenuItem = forwardRef<
+  HTMLAnchorElement,
+  MobileMenuItemProps
+>(function MobileMenuItemRef(props, ref) {
+  const { className, isActive, ...rest } = props;
   return (
     <a
-      {...rest}
       className={`dropdown-item ${className} ${isActive && "is-active"}`}
-    >
-      {children}
-    </a>
+      ref={ref}
+      {...rest}
+    />
   );
-}
+});

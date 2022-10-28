@@ -4,6 +4,13 @@ import tippy from "tippy.js";
 import styled from "styled-components";
 import "tippy.js/dist/tippy.css";
 
+import { SearchInput } from "../ui/search-input";
+import { Loading } from "../ui/loading";
+import { Buttons } from "../ui/buttons";
+import { Button } from "../ui/Button";
+import { Columns } from "../ui/columns";
+import { Column } from "../ui/column";
+
 const Workspace = styled.span`
   margin-bottom: 6px;
 `;
@@ -46,29 +53,16 @@ export default function Menu(props: MenuProps) {
   });
   return (
     <>
-      <div className="columns">
-        <div className="column is-one-quarter">
-          <div className="field">
-            <p className="control has-icons-left">
-              <input
-                className="input is-rounded"
-                type="text"
-                placeholder="what did you want?"
-              />
-              <span className="icon is-small is-left">
-                <i className="fa-solid fa-magnifying-glass"></i>
-              </span>
-            </p>
-          </div>
-        </div>
-        <div className="column">
-          <p className="buttons is-right">
+      <Columns>
+        <Column className="is-one-quarter">
+          <SearchInput />
+        </Column>
+        <Column>
+          <Buttons position="right">
             <Workspace className="tag is-white">
               <strong>WORKSPACES: </strong>
             </Workspace>
-            {isLoadingWorkspaces && (
-              <button className="button is-rounded is-loading disabled"></button>
-            )}
+            <Loading isLoading={isLoadingWorkspaces} />
             {!isLoadingWorkspaces && (
               <>
                 {workspaces.map((workspace) => (
@@ -76,50 +70,51 @@ export default function Menu(props: MenuProps) {
                     href={`/workspace/${workspace.name}`}
                     key={workspace.id}
                   >
-                    <button
-                      className={`button is-rounded ${
-                        workspace.id === currentWorkspace?.id && "is-dark"
-                      }`}
-                    >
-                      {workspace.name.charAt(0).toUpperCase() +
-                        workspace.name.slice(1)}
-                    </button>
+                    <a>
+                      <Button
+                        text={workspace.name}
+                        corner="radius"
+                        color={
+                          workspace.id === currentWorkspace?.id
+                            ? "dark"
+                            : "standard"
+                        }
+                      />
+                    </a>
                   </Link>
                 ))}
                 <Link href="/workspace/create">
-                  <button
-                    id="createWorkspace"
-                    className={`button is-rounded ${
-                      isCreateWorkspaceActive && "is-dark"
-                    }`}
-                  >
-                    <i className="fa-regular fa-plus"></i>
-                  </button>
+                  <a>
+                    <Button
+                      id="createWorkspace"
+                      icon="fa-regular fa-plus"
+                      color={isCreateWorkspaceActive ? "dark" : "standard"}
+                      corner="radius"
+                    />
+                  </a>
                 </Link>
               </>
             )}
             {currentWorkspace && (
               <Link href={`/workspace/${currentWorkspace.name}/trades`}>
-                <button
-                  id="workspaceSettings"
-                  className={`button is-rounded ${
-                    isSettingsActive && "is-dark"
-                  }`}
-                >
-                  <span className="icon is-small">
-                    <i className="fa fa-sliders"></i>
-                  </span>
-                </button>
+                <a>
+                  <Button
+                    id="workspaceSettings"
+                    icon="fa fa-sliders"
+                    corner="radius"
+                    color={isSettingsActive ? "dark" : "standard"}
+                  />
+                </a>
               </Link>
             )}
-          </p>
-        </div>
-      </div>
-      <div className="columns">
-        <div className="column">
+          </Buttons>
+        </Column>
+      </Columns>
+      <Columns>
+        <Column>
           <Hr />
-        </div>
-      </div>
+        </Column>
+      </Columns>
     </>
   );
 }
