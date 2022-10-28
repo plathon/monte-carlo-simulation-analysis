@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import tippy from "tippy.js";
-import styled from "styled-components";
 import "tippy.js/dist/tippy.css";
 
 import { SearchInput } from "../ui/search-input";
@@ -11,11 +10,7 @@ import { Column } from "../ui/column";
 
 import { MenuProps } from "./properties";
 
-const Hr = styled.hr`
-  margin: 0.5 rem 0;
-`;
-
-export default function Menu(props: MenuProps) {
+export default function NavBar(props: MenuProps) {
   useEffect(() => {
     tippy("#createWorkspace", {
       content: "Create a new workspace",
@@ -34,11 +29,6 @@ export default function Menu(props: MenuProps) {
         </Column>
         <Column>
           <WorkspaceMenu {...props} />
-        </Column>
-      </Columns>
-      <Columns>
-        <Column>
-          <Hr />
         </Column>
       </Columns>
     </>
