@@ -1,26 +1,24 @@
 import { useEffect } from "react";
-import Head from "next/head";
-import { signIn } from "next-auth/react";
-import { useSession } from "next-auth/react";
 import { useFormik } from "formik";
 import { object, string } from "yup";
 import { trpc } from "../../utils/trpc";
 
-import TopBar from "../../components/top_bar";
+import { Columns } from "../../components/ui/columns";
+import { Column } from "../../components/ui/column";
+import { SideMenu } from "../../components/ui/side-menu";
+import { Control } from "../../components/ui/control";
+import { TextField } from "../../components/ui/field";
+import { Button } from "../../components/ui/Button";
 
-export default function Index() {
-  const session = useSession();
+import { MainLayout } from "../../components/layouts";
 
+import type { NextPageWithLayout } from "../_app";
+
+const Index: NextPageWithLayout = () => {
   const userData = trpc.useQuery(["user.data"]);
   const userMutation = trpc.useMutation(["user.update"]);
 
   const { data, isFetching, isFetched } = userData;
-
-  useEffect(() => {
-    if (session.status === "unauthenticated") {
-      signIn();
-    }
-  });
 
   const formik = useFormik({
     initialValues: {
@@ -41,99 +39,48 @@ export default function Index() {
   }, [isFetched, data?.name, setFieldValue]);
 
   return (
-    <>
-      <Head>
-        <title>Snap Trade - Settings</title>
-      </Head>
-      <div className="container is-widescreen">
-        <div className="columns">
-          <div className="column is-full">
-            <TopBar />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column is-full">
-            <hr />
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column is-one-quarter">
-            <aside className="menu">
-              <p className="menu-label">General</p>
-              <ul className="menu-list">
-                <li>
-                  <a className="is-active">Profile</a>
-                </li>
-                <li>
-                  <a>Workspaces</a>
-                </li>
-              </ul>
-              <p className="menu-label">Transactions</p>
-              <ul className="menu-list">
-                <li>
-                  <a>Billing</a>
-                </li>
-                <li>
-                  <a>Plans</a>
-                </li>
-              </ul>
-            </aside>
-          </div>
-          <div className="column">
-            {userMutation.error && (
-              <p>Something went wrong! {userMutation.error.message}</p>
-            )}
-            <form onSubmit={formik.handleSubmit}>
-              <div className="field">
-                <label className="label">Name</label>
-                <div className={`control ${isFetching && "is-loading"}`}>
-                  <input
-                    className={`input ${
-                      formik.touched.name && formik.errors.name
-                        ? "is-danger"
-                        : ""
-                    }`}
-                    name="name"
-                    type="text"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    value={formik.values.name}
-                    disabled={isFetching}
-                  />
-                </div>
-                {formik.touched.name && formik.errors.name ? (
-                  <p className="help is-danger">{formik.errors.name}</p>
-                ) : null}
-              </div>
+    <Columns>
+      <Column oneQuarter>
+        <SideMenu />
+      </Column>
+      <Column>
+        <form onSubmit={formik.handleSubmit}>
+          <TextField
+            label="Name"
+            name="name"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.name}
+            isFetching={isFetching}
+            isLoading={isFetching}
+            error={formik.touched.name ? formik.errors.name : ""}
+          />
 
-              <div className="field">
-                <label className="label">Email</label>
-                <div className="control">
-                  <input
-                    className="input"
-                    name="email"
-                    type="email"
-                    placeholder="Ex: example@example.com"
-                    value={data?.email || ""}
-                    disabled
-                  />
-                </div>
-              </div>
+          <TextField
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="Ex: example@example.com"
+            value={data?.email || ""}
+            disabled
+          />
 
-              <div className="control">
-                <button
-                  className={`button is-dark ${
-                    userMutation.isLoading ? "is-loading" : ""
-                  }`}
-                  type="submit"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </>
+          <Control>
+            <Button
+              text="Save"
+              color="dark"
+              type="submit"
+              isLoading={userMutation.isLoading}
+            />
+          </Control>
+        </form>
+      </Column>
+    </Columns>
   );
-}
+};
+
+Index.getLayout = function getLayout(page) {
+  return <MainLayout title="Settings">{page}</MainLayout>;
+};
+
+export default Index;
