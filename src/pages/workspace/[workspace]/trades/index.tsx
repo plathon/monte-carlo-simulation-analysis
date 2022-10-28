@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { object, number, mixed } from "yup";
 
 import TopBar from "../../../../components/top_bar";
-import Menu from "../../../../components/menu";
+import Menu from "../../../../components/nav_bar";
 
 import { trpc } from "../../../../utils/trpc";
 

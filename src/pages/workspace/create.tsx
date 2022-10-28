@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useFormik } from "formik";
 import { object, string } from "yup";
-import Menu from "../../components/menu";
+import Menu from "../../components/nav_bar";
 
 import TopBar from "../../components/top_bar";
 import { trpc } from "../../utils/trpc";

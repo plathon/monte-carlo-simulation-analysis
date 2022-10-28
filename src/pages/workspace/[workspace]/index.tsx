@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { trpc } from "../../../utils/trpc";
 
 import TopBar from "../../../components/top_bar";
-import Menu from "../../../components/menu";
+import Menu from "../../../components/nav_bar";
 
 import ExampleChart from "../../../components/charts/example-chart";
 import ExampleBarChart from "../../../components/charts/example-bar-chart";
