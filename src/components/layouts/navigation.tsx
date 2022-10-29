@@ -16,10 +16,6 @@ type Props = {
 export function NavigationLayout(props: Props) {
   const { title, children } = props;
   const router = useRouter();
-  console.log(
-    "🚀 ~ file: navigation.tsx ~ line 19 ~ NavigationLayout ~ router",
-    router
-  );
   const { workspace: workspaceParam } = router.query;
   const workspaceQuery = trpc.useQuery(["workspace.list"]);
   const { data: workspaces, isLoading: isLoadingWorkspaces } = workspaceQuery;
