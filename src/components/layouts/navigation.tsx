@@ -1,5 +1,5 @@
 import Head from "next/head";
-
+import { useRouter } from "next/router";
 import { Column } from "../ui/column";
 import { Columns } from "../ui/columns";
 import { Container } from "../ui/container";
@@ -15,8 +15,17 @@ type Props = {
 
 export function NavigationLayout(props: Props) {
   const { title, children } = props;
+  const router = useRouter();
+  console.log(
+    "🚀 ~ file: navigation.tsx ~ line 19 ~ NavigationLayout ~ router",
+    router
+  );
+  const { workspace: workspaceParam } = router.query;
   const workspaceQuery = trpc.useQuery(["workspace.list"]);
   const { data: workspaces, isLoading: isLoadingWorkspaces } = workspaceQuery;
+  const currentWorkspace = workspaces?.find(
+    (workspace) => workspace.name === workspaceParam
+  );
 
   return (
     <>
@@ -32,7 +41,11 @@ export function NavigationLayout(props: Props) {
         <NavBar
           isLoadingWorkspaces={isLoadingWorkspaces}
           workspaces={workspaces || []}
-          isCreateWorkspaceActive
+          workspace={currentWorkspace}
+          isCreateWorkspaceActive={router.asPath === "/workspace/create"}
+          isSettingsActive={
+            router.asPath === `/workspace/${currentWorkspace?.name}/trades`
+          }
         />
         <Columns>
           <Column full>
