@@ -1,24 +1,24 @@
 type Props = {
-  full?: boolean;
-  oneQuarter?: boolean;
+  size?:
+    | "full"
+    | "four-fifths"
+    | "three-quarters"
+    | "two-thirds"
+    | "three-fifths"
+    | "half"
+    | "two-fifths"
+    | "one-third"
+    | "one-quarter"
+    | "one-fifth";
 } & JSX.IntrinsicElements["div"];
 
 export function Column(props: Props) {
-  const { className, full, oneQuarter, ...rest } = props;
+  const { className, size, ...rest } = props;
   return (
-    <div
-      className={`column ${renderOneQuarter(oneQuarter)} ${renderFull(
-        full
-      )} ${className}`}
-      {...rest}
-    />
+    <div className={`column ${renderSize(size)} ${className}`} {...rest} />
   );
 }
 
-function renderOneQuarter(isOneQuarter?: boolean) {
-  return isOneQuarter ? "is-one-quarter" : "";
-}
-
-function renderFull(isFull?: boolean) {
-  return isFull ? "is-full" : "";
+function renderSize(size: string | undefined) {
+  return size ? `is-${size}` : "";
 }

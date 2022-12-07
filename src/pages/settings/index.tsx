@@ -40,7 +40,7 @@ const Index: NextPageWithLayout = () => {
 
   return (
     <Columns>
-      <Column oneQuarter>
+      <Column size="one-quarter">
         <SideMenu />
       </Column>
       <Column>
