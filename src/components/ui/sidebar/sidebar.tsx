@@ -20,7 +20,7 @@ const MessageBody = styled.div`
 type Props = {
   title: string;
   children: JSX.Element | JSX.Element[];
-} & JSX.IntrinsicElements["aside"];
+} & JSX.IntrinsicElements["article"];
 
 export function Sidebar(props: Props) {
   const { title, children } = props;
