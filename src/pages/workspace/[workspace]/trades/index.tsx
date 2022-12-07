@@ -14,6 +14,10 @@ import {
 } from "../../../../components/ui/breadcrumb";
 import { Button } from "../../../../components/ui/Button";
 import { Buttons } from "../../../../components/ui/buttons";
+import { Sidebar } from "../../../../components/ui/sidebar";
+
+import { TextField } from "../../../../components/ui/field";
+import { Select } from "../../../../components/ui/select";
 
 import { trpc } from "../../../../utils/trpc";
 
@@ -39,6 +43,12 @@ const PaginationContainer = styled.div`
 
 const Table = styled.table`
   width: 100%;
+  text-align: center;
+  th {
+    font-size: 12px;
+    text-align: center !important;
+    text-transform: uppercase;
+  }
 `;
 
 const Input = styled.input`
@@ -60,6 +70,11 @@ const Index: NextPageWithLayout = () => {
   const workspace = workspaces?.find(
     (workspaceItem) => workspaceItem.name === workspaceParam
   );
+
+  const LongShortSelect = [
+    { label: "Long", value: "BUY", index: "0" },
+    { label: "Short", value: "SELL", index: "1" },
+  ];
 
   const formik = useFormik({
     initialValues: {
@@ -87,221 +102,161 @@ const Index: NextPageWithLayout = () => {
   return (
     <>
       {!isLoadingTrades && (
-        <>
-          <Columns>
-            <Column>
-              <Header>
-                {workspace && (
-                  <Breadcrumb size="small">
-                    <BreadcrumbItem isActive={true}>
-                      <BreadcrumbLink>workspace</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbItem>
-                      <Link href={`/workspace/${workspace.name}`}>
-                        <BreadcrumbLink>{workspace.name}</BreadcrumbLink>
-                      </Link>
-                    </BreadcrumbItem>
-                    <BreadcrumbItem isActive={true}>
-                      <BreadcrumbLink>trades</BreadcrumbLink>
-                    </BreadcrumbItem>
-                  </Breadcrumb>
-                )}
-                <Buttons>
-                  <Button text="File Upload" icon="fas fa-chart-line" />
-                </Buttons>
-              </Header>
-            </Column>
-          </Columns>
-          <Columns>
-            <TableContainer className="column">
-              <form onSubmit={formik.handleSubmit}>
-                <Table className="table is-bordered">
-                  <thead>
-                    <tr>
-                      <th>Symbol</th>
-                      <th>Open Price</th>
-                      <th>Close Price</th>
-                      <th>Open DateTime</th>
-                      <th>Close DateTime</th>
-                      <th>Side</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <Input
-                              className={`input ${
-                                formik.touched.symbol && formik.errors.symbol
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                              type="text"
-                              placeholder="ex: EURUSD"
-                              name="symbol"
-                              onChange={formik.handleChange}
-                              onBlur={formik.handleBlur}
-                              value={formik.values.symbol}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <Input
-                              className={`input ${
-                                formik.touched.open_price &&
-                                formik.errors.open_price
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                              type="text"
-                              placeholder="1000.00"
-                              name="open_price"
-                              onChange={formik.handleChange}
-                              onBlur={formik.handleBlur}
-                              value={formik.values.open_price}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <Input
-                              className={`input ${
-                                formik.touched.close_price &&
-                                formik.errors.close_price
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                              type="text"
-                              placeholder="1000.50"
-                              name="close_price"
-                              onChange={formik.handleChange}
-                              onBlur={formik.handleBlur}
-                              value={formik.values.close_price}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <Input
-                              className={`input ${
-                                formik.touched.begin_at &&
-                                formik.errors.begin_at
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                              type="text"
-                              placeholder="Type trade datetime"
-                              name="begin_at"
-                              onChange={formik.handleChange}
-                              onBlur={formik.handleBlur}
-                              value={formik.values.begin_at}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <Input
-                              className={`input ${
-                                formik.touched.end_at && formik.errors.end_at
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                              type="text"
-                              placeholder="Type close trade datetime"
-                              name="end_at"
-                              onChange={formik.handleChange}
-                              onBlur={formik.handleBlur}
-                              value={formik.values.end_at}
-                            />
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="field">
-                          <div className="control">
-                            <div
-                              className={`select ${
-                                formik.touched.side && formik.errors.side
-                                  ? "is-danger"
-                                  : ""
-                              }`}
-                            >
-                              <select
-                                name="side"
-                                onChange={(event) =>
-                                  formik.setFieldValue(
-                                    "side",
-                                    event.target.value
-                                  )
-                                }
-                                onBlur={formik.handleBlur}
-                                value={formik.values.side}
-                              >
-                                <option value="BUY">Long</option>
-                                <option value="SELL">Short</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="buttons">
-                          <button
-                            className={`button is-small is-link ${
-                              tradeMutation.isLoading && "is-loading"
-                            }`}
-                          >
-                            <i className="fa fa-check"></i>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                    {tradeList?.map((trade) => (
-                      <tr key={trade.id}>
-                        <td>{trade.symbol}</td>
-                        <td>{trade.open_price.toString()}</td>
-                        <td>{trade.close_price.toString()}</td>
-                        <td>{trade.begin_at?.toDateString()}</td>
-                        <td>{trade.end_at?.toDateString()}</td>
-                        <td>{trade.side}</td>
-                        <td>
-                          <div className="buttons">
+        <Columns>
+          <Column>
+            <Columns>
+              <Column>
+                <Header>
+                  {workspace && (
+                    <Breadcrumb size="small">
+                      <BreadcrumbItem isActive={true}>
+                        <BreadcrumbLink>workspace</BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbItem>
+                        <Link href={`/workspace/${workspace.name}`}>
+                          <BreadcrumbLink>{workspace.name}</BreadcrumbLink>
+                        </Link>
+                      </BreadcrumbItem>
+                      <BreadcrumbItem isActive={true}>
+                        <BreadcrumbLink>trades</BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </Breadcrumb>
+                  )}
+                  <Buttons>
+                    <Button text="File Upload" icon="fas fa-chart-line" />
+                    <Button text="Add Trade" icon="fas fa-pen" />
+                  </Buttons>
+                </Header>
+              </Column>
+            </Columns>
+            <Columns>
+              <Column>
+                <TableContainer>
+                  <Table className="table is-bordered">
+                    <thead>
+                      <tr>
+                        <th>Symbol</th>
+                        <th>Open Price</th>
+                        <th>Close Price</th>
+                        <th>Open DateTime</th>
+                        <th>Close DateTime</th>
+                        <th>Side</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tradeList?.map((trade) => (
+                        <tr key={trade.id}>
+                          <td>{trade.symbol}</td>
+                          <td>{trade.open_price.toString()}</td>
+                          <td>{trade.close_price.toString()}</td>
+                          <td>{trade.begin_at?.toDateString()}</td>
+                          <td>{trade.end_at?.toDateString()}</td>
+                          <td>{trade.side}</td>
+                          <td>
                             <button className="button is-small">
                               <i className="fa fa-xmark"></i>
                             </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </TableContainer>
+              </Column>
+            </Columns>
+            <Columns>
+              <PaginationContainer className="column is-half is-offset-one-quarter">
+                <nav
+                  className="pagination is-small"
+                  role="navigation"
+                  aria-label="pagination"
+                >
+                  <a className="pagination-previous">Previous</a>
+                  <a className="pagination-next">Next page</a>
+                </nav>
+              </PaginationContainer>
+            </Columns>
+          </Column>
+          <Column
+            size="one-quarter"
+            style={{ borderLeft: "1px solid #dbdbdb" }}
+          >
+            <Sidebar title="register trade">
+              <form onSubmit={formik.handleSubmit}>
+                <TextField
+                  label="Symbol"
+                  name="symbol"
+                  placeholder="Ex: EURUSD"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.symbol}
+                  error={formik.touched.symbol ? formik.errors.symbol : ""}
+                />
+
+                <TextField
+                  label="Open Price"
+                  name="open_price"
+                  placeholder="Ex: 1000.00"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.open_price}
+                  error={
+                    formik.touched.open_price ? formik.errors.open_price : ""
+                  }
+                />
+
+                <TextField
+                  label="Close Price"
+                  name="close_price"
+                  placeholder="Ex: 1000.50"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.close_price}
+                  error={
+                    formik.touched.close_price ? formik.errors.close_price : ""
+                  }
+                />
+
+                <TextField
+                  label="Open Datetime"
+                  name="begin_at"
+                  placeholder="Ex: 1000.50"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.begin_at}
+                  error={formik.touched.begin_at ? formik.errors.begin_at : ""}
+                />
+
+                <TextField
+                  label="Close Datetime"
+                  name="end_at"
+                  placeholder="Ex: 1000.50"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.end_at}
+                  error={formik.touched.end_at ? formik.errors.end_at : ""}
+                />
+
+                <Select
+                  label="Side"
+                  name="side"
+                  onChange={(event) =>
+                    formik.setFieldValue("side", event.target.value)
+                  }
+                  onBlur={formik.handleBlur}
+                  value={formik.values.side}
+                  data={LongShortSelect}
+                  touched={formik.touched.side}
+                  error={formik.errors.side}
+                />
+                <Buttons position="right">
+                  <Button text="Create" />
+                </Buttons>
               </form>
-            </TableContainer>
-          </Columns>
-          <Columns>
-            <PaginationContainer className="column is-half is-offset-one-quarter">
-              <nav
-                className="pagination is-small"
-                role="navigation"
-                aria-label="pagination"
-              >
-                <a className="pagination-previous">Previous</a>
-                <a className="pagination-next">Next page</a>
-              </nav>
-            </PaginationContainer>
-          </Columns>
-        </>
+            </Sidebar>
+          </Column>
+        </Columns>
       )}
     </>
   );
