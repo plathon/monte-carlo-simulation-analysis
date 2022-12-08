@@ -1,6 +1,5 @@
-import { useFormik } from "formik";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import { object, number, mixed } from "yup";
 import styled from "styled-components";
 import Link from "next/link";
 
@@ -14,10 +13,16 @@ import {
 } from "../../../../components/ui/breadcrumb";
 import { Button } from "../../../../components/ui/Button";
 import { Buttons } from "../../../../components/ui/buttons";
-import { Sidebar } from "../../../../components/ui/sidebar";
 
-import { TextField } from "../../../../components/ui/field";
-import { Select } from "../../../../components/ui/select";
+import { Pagination } from "../../../../components/ui/pagination";
+
+import {
+  TableBody,
+  TableHead,
+  Table as TableUI,
+} from "../../../../components/ui/table";
+
+import { RegisterTrade as RegisterTradeSidebar } from "../../../../components/sidebars";
 
 import { trpc } from "../../../../utils/trpc";
 
@@ -36,12 +41,12 @@ const BreadcrumbLink = styled.a`
   text-transform: capitalize;
 `;
 
-const PaginationContainer = styled.div`
+const PaginationColumn = styled(Column)`
   display: flex;
   justify-content: center;
 `;
 
-const Table = styled.table`
+const Table = styled(TableUI)`
   width: 100%;
   text-align: center;
   th {
@@ -51,54 +56,27 @@ const Table = styled.table`
   }
 `;
 
-const Input = styled.input`
-  max-width: 180px;
-`;
-
-const TableContainer = styled.div`
+const TableColumn = styled(Column)`
   overflow-x: auto;
 `;
 
 const Index: NextPageWithLayout = () => {
+  const [isActiveCreateTrade, setIsActiveCreateTrade] = useState(false);
   const router = useRouter();
+  const queryContext = trpc.useContext();
   const { workspace: workspaceParam } = router.query;
   const { isLoading: isLoadingTrades, data: tradeList } = trpc.useQuery([
     "trade.list",
   ]);
   const { data: workspaces } = trpc.useQuery(["workspace.list"]);
-  const tradeMutation = trpc.useMutation(["trade.create"]);
+  const tradeMutation = trpc.useMutation(["trade.create"], {
+    onSuccess: () => queryContext.invalidateQueries(["trade.list"]),
+  });
   const workspace = workspaces?.find(
     (workspaceItem) => workspaceItem.name === workspaceParam
   );
 
-  const LongShortSelect = [
-    { label: "Long", value: "BUY", index: "0" },
-    { label: "Short", value: "SELL", index: "1" },
-  ];
-
-  const formik = useFormik({
-    initialValues: {
-      symbol: "",
-      open_price: "",
-      close_price: "",
-      begin_at: "",
-      end_at: "",
-      side: "BUY",
-    },
-    validationSchema: object({
-      open_price: number().required(),
-      close_price: number().required(),
-      side: mixed().oneOf(["BUY", "SELL"]),
-    }),
-    onSubmit: (data) => {
-      const { open_price, close_price, side } = data;
-      tradeMutation.mutate({
-        open_price: Number(open_price),
-        close_price: Number(close_price),
-        side: side === "SELL" ? "SELL" : "BUY",
-      });
-    },
-  });
+  const handleCloseSidebar = () => setIsActiveCreateTrade(!isActiveCreateTrade);
   return (
     <>
       {!isLoadingTrades && (
@@ -124,137 +102,64 @@ const Index: NextPageWithLayout = () => {
                   )}
                   <Buttons>
                     <Button text="File Upload" icon="fas fa-chart-line" />
-                    <Button text="Add Trade" icon="fas fa-pen" />
+                    <Button
+                      text="Add Trade"
+                      icon="fas fa-pen"
+                      color={isActiveCreateTrade ? "black" : "standard"}
+                      onClick={handleCloseSidebar}
+                    />
                   </Buttons>
                 </Header>
               </Column>
             </Columns>
             <Columns>
-              <Column>
-                <TableContainer>
-                  <Table className="table is-bordered">
-                    <thead>
-                      <tr>
-                        <th>Symbol</th>
-                        <th>Open Price</th>
-                        <th>Close Price</th>
-                        <th>Open DateTime</th>
-                        <th>Close DateTime</th>
-                        <th>Side</th>
-                        <th>Actions</th>
+              <TableColumn>
+                <Table bordered>
+                  <TableHead>
+                    <th>Symbol</th>
+                    <th>Open Price</th>
+                    <th>Close Price</th>
+                    <th>Open DateTime</th>
+                    <th>Close DateTime</th>
+                    <th>Side</th>
+                    <th>Actions</th>
+                  </TableHead>
+                  <TableBody>
+                    {tradeList?.map((trade) => (
+                      <tr key={trade.id}>
+                        <td>{trade.symbol}</td>
+                        <td>{trade.open_price.toString()}</td>
+                        <td>{trade.close_price.toString()}</td>
+                        <td>{trade.begin_at?.toDateString()}</td>
+                        <td>{trade.end_at?.toDateString()}</td>
+                        <td>{trade.side}</td>
+                        <td>
+                          <button className="button is-small">
+                            <i className="fa fa-xmark"></i>
+                          </button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {tradeList?.map((trade) => (
-                        <tr key={trade.id}>
-                          <td>{trade.symbol}</td>
-                          <td>{trade.open_price.toString()}</td>
-                          <td>{trade.close_price.toString()}</td>
-                          <td>{trade.begin_at?.toDateString()}</td>
-                          <td>{trade.end_at?.toDateString()}</td>
-                          <td>{trade.side}</td>
-                          <td>
-                            <button className="button is-small">
-                              <i className="fa fa-xmark"></i>
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                </TableContainer>
-              </Column>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableColumn>
             </Columns>
             <Columns>
-              <PaginationContainer className="column is-half is-offset-one-quarter">
-                <nav
-                  className="pagination is-small"
-                  role="navigation"
-                  aria-label="pagination"
-                >
-                  <a className="pagination-previous">Previous</a>
-                  <a className="pagination-next">Next page</a>
-                </nav>
-              </PaginationContainer>
+              <PaginationColumn className="is-half is-offset-one-quarter">
+                <Pagination size="small" />
+              </PaginationColumn>
             </Columns>
           </Column>
           <Column
+            visibility={!isActiveCreateTrade ? "hidden" : "visible"}
             size="one-quarter"
             style={{ borderLeft: "1px solid #dbdbdb" }}
           >
-            <Sidebar title="register trade">
-              <form onSubmit={formik.handleSubmit}>
-                <TextField
-                  label="Symbol"
-                  name="symbol"
-                  placeholder="Ex: EURUSD"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.symbol}
-                  error={formik.touched.symbol ? formik.errors.symbol : ""}
-                />
-
-                <TextField
-                  label="Open Price"
-                  name="open_price"
-                  placeholder="Ex: 1000.00"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.open_price}
-                  error={
-                    formik.touched.open_price ? formik.errors.open_price : ""
-                  }
-                />
-
-                <TextField
-                  label="Close Price"
-                  name="close_price"
-                  placeholder="Ex: 1000.50"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.close_price}
-                  error={
-                    formik.touched.close_price ? formik.errors.close_price : ""
-                  }
-                />
-
-                <TextField
-                  label="Open Datetime"
-                  name="begin_at"
-                  placeholder="Ex: 1000.50"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.begin_at}
-                  error={formik.touched.begin_at ? formik.errors.begin_at : ""}
-                />
-
-                <TextField
-                  label="Close Datetime"
-                  name="end_at"
-                  placeholder="Ex: 1000.50"
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values.end_at}
-                  error={formik.touched.end_at ? formik.errors.end_at : ""}
-                />
-
-                <Select
-                  label="Side"
-                  name="side"
-                  onChange={(event) =>
-                    formik.setFieldValue("side", event.target.value)
-                  }
-                  onBlur={formik.handleBlur}
-                  value={formik.values.side}
-                  data={LongShortSelect}
-                  touched={formik.touched.side}
-                  error={formik.errors.side}
-                />
-                <Buttons position="right">
-                  <Button text="Create" />
-                </Buttons>
-              </form>
-            </Sidebar>
+            <RegisterTradeSidebar
+              createTrade={tradeMutation.mutate}
+              onClose={handleCloseSidebar}
+              isLoading={tradeMutation.isLoading}
+            />
           </Column>
         </Columns>
       )}
