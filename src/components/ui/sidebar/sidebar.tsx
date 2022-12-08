@@ -20,15 +20,16 @@ const MessageBody = styled.div`
 type Props = {
   title: string;
   children: JSX.Element | JSX.Element[];
+  onClose: () => void;
 } & JSX.IntrinsicElements["article"];
 
 export function Sidebar(props: Props) {
-  const { title, children } = props;
+  const { title, onClose, children } = props;
   return (
     <SidebarContainer className="message">
       <MessageHeader className="message-header">
         {title}
-        <Delete />
+        <Delete onClick={() => onClose()} />
       </MessageHeader>
       <MessageBody className="message-body">{children}</MessageBody>
     </SidebarContainer>
