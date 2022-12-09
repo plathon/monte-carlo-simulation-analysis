@@ -9,6 +9,7 @@ import type { AppRouter } from "../server/router";
 import { NextPage } from "next";
 import { ReactElement } from "react";
 import { AppProps } from "next/app";
+import { Toaster } from "react-hot-toast";
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -37,6 +38,7 @@ const MyApp = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <SessionProvider session={session}>
+        <Toaster position="top-right" />
         <Component {...pageProps} />
       </SessionProvider>
     </>

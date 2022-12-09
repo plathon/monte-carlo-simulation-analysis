@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 import { MainLayout } from "../../../../components/layouts";
 
@@ -70,7 +71,10 @@ const Index: NextPageWithLayout = () => {
   ]);
   const { data: workspaces } = trpc.useQuery(["workspace.list"]);
   const tradeMutation = trpc.useMutation(["trade.create"], {
-    onSuccess: () => queryContext.invalidateQueries(["trade.list"]),
+    onSuccess: () => {
+      queryContext.invalidateQueries(["trade.list"]);
+      toast.success("Your trade was successfully created.");
+    },
   });
   const workspace = workspaces?.find(
     (workspaceItem) => workspaceItem.name === workspaceParam
