@@ -70,10 +70,19 @@ const Index: NextPageWithLayout = () => {
     "trade.list",
   ]);
   const { data: workspaces } = trpc.useQuery(["workspace.list"]);
-  const tradeMutation = trpc.useMutation(["trade.create"], {
+  const createTradeMutation = trpc.useMutation(["trade.create"], {
     onSuccess: () => {
       queryContext.invalidateQueries(["trade.list"]);
       toast.success("Your trade was successfully created.");
+    },
+  });
+  const removeTradeMutation = trpc.useMutation(["trade.remove"], {
+    onSuccess: () => {
+      queryContext.invalidateQueries(["trade.list"]);
+      toast.success("Trade was successfully removed.");
+    },
+    onError: () => {
+      toast.error("Could not remove trade, try again late.");
     },
   });
   const workspace = workspaces?.find(
@@ -138,9 +147,13 @@ const Index: NextPageWithLayout = () => {
                         <td>{trade.end_at?.toDateString()}</td>
                         <td>{trade.side}</td>
                         <td>
-                          <button className="button is-small">
-                            <i className="fa fa-xmark"></i>
-                          </button>
+                          <Button
+                            icon="fa fa-xmark"
+                            size="small"
+                            onClick={() =>
+                              removeTradeMutation.mutate({ id: trade.id })
+                            }
+                          />
                         </td>
                       </tr>
                     ))}
@@ -160,9 +173,9 @@ const Index: NextPageWithLayout = () => {
             style={{ borderLeft: "1px solid #dbdbdb" }}
           >
             <RegisterTradeSidebar
-              createTrade={tradeMutation.mutate}
+              createTrade={createTradeMutation.mutate}
               onClose={handleCloseSidebar}
-              isLoading={tradeMutation.isLoading}
+              isLoading={createTradeMutation.isLoading}
             />
           </Column>
         </Columns>

@@ -44,4 +44,21 @@ export const tradeRoutes = createProtectedRouter()
         },
       });
     },
+  })
+  .mutation("remove", {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const {
+        prisma,
+        session: { user },
+      } = ctx;
+      const { id } = input;
+      return await prisma.trade.delete({
+        where: {
+          id: id,
+        },
+      });
+    },
   });
