@@ -8,11 +8,18 @@ export const workspaceRoutes = createProtectedRouter()
         prisma,
         session: { user },
       } = ctx;
-      return await prisma.workspace.findMany({
+      const workspaces = await prisma.workspace.findMany({
         where: {
           ownerId: user.id,
         },
       });
+      if (Array.isArray(workspaces) && !workspaces.length) {
+        const data = await prisma.workspace.create({
+          data: { name: "default", owner: { connect: { id: user.id } } },
+        });
+        return [data];
+      }
+      return workspaces;
     },
   })
   .mutation("create", {
