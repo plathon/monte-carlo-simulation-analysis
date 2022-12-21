@@ -3,19 +3,21 @@ import { z } from "zod";
 
 export const tradeRoutes = createProtectedRouter()
   .query("list", {
-    async resolve({ ctx }) {
+    input: z.object({
+      workspace: z.string().optional(),
+    }),
+    async resolve({ ctx, input: { workspace: workspaceId } }) {
       const {
         prisma,
         session: { user },
       } = ctx;
-      const workspace = await prisma.workspace.findUnique({
-        where: {
-          id: "cl8z6e1mu0052ckaperl48zzy",
-        },
-      });
-      return await prisma.trade.findMany({
-        where: { workspaceId: workspace?.id },
-      });
+      return await prisma.workspace
+        .findFirst({
+          where: {
+            AND: [{ id: workspaceId }, { ownerId: user.id }],
+          },
+        })
+        .trades();
     },
   })
   .mutation("create", {
