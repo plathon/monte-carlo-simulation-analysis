@@ -66,10 +66,16 @@ export const tradeRoutes = createProtectedRouter()
         session: { user },
       } = ctx;
       const { id } = input;
-      return await prisma.trade.delete({
-        where: {
-          id: id,
-        },
-      });
+      const workspace = await prisma.trade
+        .findUnique({ where: { id } })
+        .workspace();
+      if (workspace?.ownerId === user.id) {
+        return await prisma.trade.delete({
+          where: {
+            id,
+          },
+        });
+      }
+      return false;
     },
   });
