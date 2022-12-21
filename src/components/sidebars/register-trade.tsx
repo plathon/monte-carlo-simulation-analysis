@@ -6,20 +6,22 @@ import { TextField } from "../ui/field";
 import { Select } from "../ui/select";
 import { Sidebar } from "../ui/sidebar";
 
-type Trade = {
+interface Trade {
   open_price: number;
   close_price: number;
   side: "BUY" | "SELL";
-};
+  workspace: string;
+}
 
 type Props = {
   isLoading?: boolean;
   createTrade: (trade: Trade) => void;
   onClose: () => void;
+  workspaceId: string;
 };
 
 export function RegisterTrade(props: Props) {
-  const { isLoading, createTrade, onClose } = props;
+  const { isLoading, createTrade, onClose, workspaceId } = props;
 
   const LongShortSelect = [
     { label: "Long", value: "BUY", index: "0" },
@@ -46,6 +48,7 @@ export function RegisterTrade(props: Props) {
         open_price: Number(open_price),
         close_price: Number(close_price),
         side: side === "SELL" ? "SELL" : "BUY",
+        workspace: workspaceId,
       });
       resetForm();
     },

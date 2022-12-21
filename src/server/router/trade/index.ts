@@ -28,23 +28,32 @@ export const tradeRoutes = createProtectedRouter()
       begin_at: z.date().optional(),
       end_at: z.date().optional(),
       side: z.enum(["BUY", "SELL"]),
-      // workspace: z.number().optional(),
+      workspace: z.string(),
     }),
     async resolve({ ctx, input }) {
       const {
         prisma,
         session: { user },
       } = ctx;
-      return await prisma.trade.create({
-        data: {
-          ...input,
-          workspace: {
-            connect: {
-              id: "cl8z6e1mu0052ckaperl48zzy",
-            },
-          },
+      const { workspace, ...rest } = input;
+      const workspaceData = await prisma.workspace.findFirst({
+        where: {
+          AND: [{ id: workspace }, { ownerId: user.id }],
         },
       });
+      if (workspaceData) {
+        return await prisma.trade.create({
+          data: {
+            ...rest,
+            workspace: {
+              connect: {
+                id: workspaceData.id,
+              },
+            },
+          },
+        });
+      }
+      return false;
     },
   })
   .mutation("remove", {
