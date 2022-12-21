@@ -188,17 +188,20 @@ const Index: NextPageWithLayout = () => {
               </Columns>
             )}
           </Column>
-          <Column
-            visibility={!isActiveCreateTrade ? "hidden" : "visible"}
-            size="one-quarter"
-            style={{ borderLeft: "1px solid #dbdbdb" }}
-          >
-            <RegisterTradeSidebar
-              createTrade={createTradeMutation.mutate}
-              onClose={handleSidebarVisibility}
-              isLoading={createTradeMutation.isLoading}
-            />
-          </Column>
+          {!!workspace?.id && (
+            <Column
+              visibility={!isActiveCreateTrade ? "hidden" : "visible"}
+              size="one-quarter"
+              style={{ borderLeft: "1px solid #dbdbdb" }}
+            >
+              <RegisterTradeSidebar
+                workspaceId={workspace?.id}
+                createTrade={createTradeMutation.mutate}
+                onClose={handleSidebarVisibility}
+                isLoading={createTradeMutation.isLoading}
+              />
+            </Column>
+          )}
         </Columns>
       )}
     </>
