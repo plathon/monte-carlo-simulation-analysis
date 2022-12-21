@@ -8,6 +8,7 @@ import { MainLayout } from "../../../../components/layouts";
 
 import { Columns } from "../../../../components/ui/columns";
 import { Column } from "../../../../components/ui/column";
+import { Content } from "../../../../components/ui/content";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -66,10 +67,14 @@ const Index: NextPageWithLayout = () => {
   const router = useRouter();
   const queryContext = trpc.useContext();
   const { workspace: workspaceParam } = router.query;
+  const { data: workspaces } = trpc.useQuery(["workspace.list"]);
+  const workspace = workspaces?.find(
+    (workspaceItem) => workspaceItem.name === workspaceParam
+  );
   const { isLoading: isLoadingTrades, data: tradeList } = trpc.useQuery([
     "trade.list",
+    { workspace: workspace?.id },
   ]);
-  const { data: workspaces } = trpc.useQuery(["workspace.list"]);
   const createTradeMutation = trpc.useMutation(["trade.create"], {
     onSuccess: () => {
       queryContext.invalidateQueries(["trade.list"]);
@@ -85,11 +90,9 @@ const Index: NextPageWithLayout = () => {
       toast.error("Could not remove trade, try again late.");
     },
   });
-  const workspace = workspaces?.find(
-    (workspaceItem) => workspaceItem.name === workspaceParam
-  );
 
-  const handleCloseSidebar = () => setIsActiveCreateTrade(!isActiveCreateTrade);
+  const handleSidebarVisibility = () =>
+    setIsActiveCreateTrade(!isActiveCreateTrade);
   return (
     <>
       {!isLoadingTrades && (
@@ -119,7 +122,7 @@ const Index: NextPageWithLayout = () => {
                       text="Add Trade"
                       icon="fas fa-pen"
                       color={isActiveCreateTrade ? "black" : "standard"}
-                      onClick={handleCloseSidebar}
+                      onClick={handleSidebarVisibility}
                     />
                   </Buttons>
                 </Header>
@@ -127,45 +130,63 @@ const Index: NextPageWithLayout = () => {
             </Columns>
             <Columns>
               <TableColumn>
-                <Table bordered>
-                  <TableHead>
-                    <th>Symbol</th>
-                    <th>Open Price</th>
-                    <th>Close Price</th>
-                    <th>Open DateTime</th>
-                    <th>Close DateTime</th>
-                    <th>Side</th>
-                    <th>Actions</th>
-                  </TableHead>
-                  <TableBody>
-                    {tradeList?.map((trade) => (
-                      <tr key={trade.id}>
-                        <td>{trade.symbol}</td>
-                        <td>{trade.open_price.toString()}</td>
-                        <td>{trade.close_price.toString()}</td>
-                        <td>{trade.begin_at?.toDateString()}</td>
-                        <td>{trade.end_at?.toDateString()}</td>
-                        <td>{trade.side}</td>
-                        <td>
-                          <Button
-                            icon="fa fa-xmark"
-                            size="small"
-                            onClick={() =>
-                              removeTradeMutation.mutate({ id: trade.id })
-                            }
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </TableBody>
-                </Table>
+                {!tradeList?.length && (
+                  <Column>
+                    <Content>
+                      <h1 className="has-text-centered">{`You don't have any trade yet :(`}</h1>
+                      <Buttons position="center">
+                        <Button
+                          color="light"
+                          text="Register your fist trade now"
+                          onClick={() => handleSidebarVisibility()}
+                        />
+                      </Buttons>
+                    </Content>
+                  </Column>
+                )}
+                {!!tradeList?.length && (
+                  <Table bordered>
+                    <TableHead>
+                      <th>Symbol</th>
+                      <th>Open Price</th>
+                      <th>Close Price</th>
+                      <th>Open DateTime</th>
+                      <th>Close DateTime</th>
+                      <th>Side</th>
+                      <th>Actions</th>
+                    </TableHead>
+                    <TableBody>
+                      {tradeList?.map((trade) => (
+                        <tr key={trade.id}>
+                          <td>{trade.symbol}</td>
+                          <td>{trade.open_price.toString()}</td>
+                          <td>{trade.close_price.toString()}</td>
+                          <td>{trade.begin_at?.toDateString()}</td>
+                          <td>{trade.end_at?.toDateString()}</td>
+                          <td>{trade.side}</td>
+                          <td>
+                            <Button
+                              icon="fa fa-xmark"
+                              size="small"
+                              onClick={() =>
+                                removeTradeMutation.mutate({ id: trade.id })
+                              }
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </TableColumn>
             </Columns>
-            <Columns>
-              <PaginationColumn className="is-half is-offset-one-quarter">
-                <Pagination size="small" />
-              </PaginationColumn>
-            </Columns>
+            {!!tradeList?.length && (
+              <Columns>
+                <PaginationColumn className="is-half is-offset-one-quarter">
+                  <Pagination size="small" />
+                </PaginationColumn>
+              </Columns>
+            )}
           </Column>
           <Column
             visibility={!isActiveCreateTrade ? "hidden" : "visible"}
@@ -174,7 +195,7 @@ const Index: NextPageWithLayout = () => {
           >
             <RegisterTradeSidebar
               createTrade={createTradeMutation.mutate}
-              onClose={handleCloseSidebar}
+              onClose={handleSidebarVisibility}
               isLoading={createTradeMutation.isLoading}
             />
           </Column>

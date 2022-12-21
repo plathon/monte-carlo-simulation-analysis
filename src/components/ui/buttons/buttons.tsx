@@ -1,5 +1,5 @@
 type Props = {
-  position?: "left" | "right";
+  position?: "left" | "right" | "center";
 } & JSX.IntrinsicElements["p"];
 
 export function Buttons(props: Props) {
@@ -13,7 +13,9 @@ export function Buttons(props: Props) {
 }
 
 function renderPosition(position?: string) {
-  return position === "left"
+  return position === "center"
+    ? "is-centered"
+    : position === "left"
     ? "is-left"
     : position === "right"
     ? "is-right"
