@@ -28,6 +28,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -36,6 +37,7 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    @@index([userId])
 }
 
 model User {
@@ -60,9 +62,11 @@ model VerificationToken {
 model Workspace {
     id String @id @default(cuid())
     name String
-    owner User @relation(fields: [ownerId], references: [id])
     ownerId String
+    owner User @relation(fields: [ownerId], references: [id])
     trades Trade[]
+
+    @@index([ownerId])
 }
 
 model Trade {
@@ -73,8 +77,10 @@ model Trade {
     close_price Decimal @db.Decimal(10,2)
     begin_at DateTime?
     end_at DateTime?
-    workspace Workspace @relation(fields: [workspaceId], references: [id])
     workspaceId String
+    workspace Workspace @relation(fields: [workspaceId], references: [id])
+
+    @@index([workspaceId])
 }
 
 enum Side {
