@@ -1,32 +1,41 @@
-import { useRouter } from "next/router";
-
-import NavBar from "../nav_bar";
-import { trpc } from "../../utils/trpc";
 import { Columns } from "../ui/columns";
 import { Column } from "../ui/column";
+import { SearchInput } from "../ui/search-input";
+import { WorkspaceMenu } from "./workspace-menu";
 
-export function NavigationMenu() {
-  const router = useRouter();
-  const { workspace: workspaceParam } = router.query;
-  const workspaceQuery = trpc.useQuery(["workspace.list"]);
-  const { data: workspaces, isLoading: isLoadingWorkspaces } = workspaceQuery;
-  const currentWorkspace = workspaces?.find(
-    (workspace) => workspace.name === workspaceParam
-  );
+export type Workspace = {
+  id: string;
+  name: string;
+  ownerId: string;
+};
 
+type Props = {
+  workspace: Workspace | undefined;
+  workspaces: Workspace[];
+  isLoadingWorkspaces: boolean;
+  openCreateWorkspaceMenu: () => void;
+};
+
+export function NavigationMenu(props: Props) {
   return (
     <>
       <Columns>
         <Column>
-          <NavBar
+          <Columns>
+            <Column size="one-quarter">
+              <SearchInput />
+            </Column>
+            <Column>
+              <WorkspaceMenu {...props} />
+            </Column>
+          </Columns>
+
+          {/* <NavBar
             isLoadingWorkspaces={isLoadingWorkspaces}
-            workspaces={workspaces || []}
-            workspace={currentWorkspace}
-            isCreateWorkspaceActive={router.asPath === "/workspace/create"}
-            isSettingsActive={
-              router.asPath === `/workspace/${currentWorkspace?.name}/trades`
-            }
-          />
+            workspaces={workspaces}
+            workspace={workspace}
+            openCreateWorkspaceMenu={openCreateWorkspaceMenu}
+          /> */}
         </Column>
       </Columns>
       <Columns>

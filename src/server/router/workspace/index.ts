@@ -25,7 +25,7 @@ export const workspaceRoutes = createProtectedRouter()
   .mutation("create", {
     input: z.object({
       name: z.string().min(3).max(14),
-      description: z.string().min(3).max(255).optional(),
+      description: z.string().max(255).optional(),
     }),
     async resolve({ ctx, input }) {
       const {
