@@ -67,6 +67,7 @@ model Workspace {
     trades Trade[]
 
     @@index([ownerId])
+    @@index([name])
 }
 
 model Trade {
