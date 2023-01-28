@@ -24,6 +24,9 @@ const Index: NextPageWithLayout = () => {
       toggleCreateWorkspaceMenu();
       message.success("Workspace was successfully created.");
     },
+    onError: (error) => {
+      message.error(error.message);
+    },
   });
 
   const {

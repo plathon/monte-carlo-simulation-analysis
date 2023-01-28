@@ -8,6 +8,7 @@ import { Buttons } from "../ui/buttons";
 import { Button } from "../ui/Button";
 
 import { Workspace } from "../../types/workspace";
+import { workspaceNameRegex } from "../../regex";
 
 const Drawer = dynamic(
   () =>
@@ -34,6 +35,10 @@ export function CreateWorkspace(props: Props) {
         .required()
         .min(3, "must be at least 3 characters long")
         .max(14, "must be less than 14 characters")
+        .matches(
+          workspaceNameRegex,
+          "Special characters and spaces not allowed, only alphanumeric and hyphen ( - )"
+        )
         .lowercase()
         .trim(),
       description: string(),
