@@ -11,6 +11,8 @@ import { ReactElement } from "react";
 import { AppProps } from "next/app";
 import { Toaster } from "react-hot-toast";
 
+import "antd/dist/antd.css";
+
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
   IP

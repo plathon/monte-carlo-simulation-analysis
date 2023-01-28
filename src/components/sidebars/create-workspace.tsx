@@ -1,18 +1,29 @@
+import dynamic from "next/dynamic";
 import { useFormik } from "formik";
 import { string, object } from "yup";
 
-import { Sidebar } from "../ui/sidebar";
 import { TextField, TextArea } from "../ui/field";
 import { Radio, Radios } from "../ui/radio";
 import { Buttons } from "../ui/buttons";
 import { Button } from "../ui/Button";
 
+import { Workspace } from "../../types/workspace";
+
+const Drawer = dynamic(
+  () =>
+    import("../../components/ui/drawer").then((component) => component.Drawer),
+  { ssr: false }
+);
+
 type Props = {
   isLoading: boolean;
+  isOpened: boolean;
+  onClose: () => void;
+  createWorkspace: (workspace: Omit<Workspace, "id" | "ownerId">) => void;
 };
 
 export function CreateWorkspace(props: Props) {
-  const { isLoading } = props;
+  const { isLoading, isOpened, onClose, createWorkspace } = props;
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -29,12 +40,17 @@ export function CreateWorkspace(props: Props) {
     }),
     onSubmit: (data, { resetForm }) => {
       resetForm();
-      console.log(data);
+      createWorkspace(data);
     },
   });
 
   return (
-    <Sidebar title="Create Workspace" onClose={() => console.log()}>
+    <Drawer
+      title="Create Workspace"
+      placement="right"
+      onClose={onClose}
+      open={isOpened}
+    >
       <form onSubmit={formik.handleSubmit}>
         <TextField
           label="Workspace Name*"
@@ -68,6 +84,6 @@ export function CreateWorkspace(props: Props) {
           <Button text="Create" isLoading={isLoading} />
         </Buttons>
       </form>
-    </Sidebar>
+    </Drawer>
   );
 }

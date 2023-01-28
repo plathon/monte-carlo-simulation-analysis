@@ -19,13 +19,8 @@ export function MainLayout(props: Props) {
       </Head>
       <Container widescreen>
         <Columns>
-          <Column full>
+          <Column>
             <TopBar />
-          </Column>
-        </Columns>
-        <Columns>
-          <Column full>
-            <hr />
           </Column>
         </Columns>
         {children}
