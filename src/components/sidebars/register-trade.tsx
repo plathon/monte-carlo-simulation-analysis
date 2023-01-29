@@ -1,10 +1,16 @@
+import dynamic from "next/dynamic";
 import { useFormik } from "formik";
 import { mixed, number, object } from "yup";
 import { Button } from "../ui/Button";
 import { Buttons } from "../ui/buttons";
 import { TextField } from "../ui/field";
 import { Select } from "../ui/select";
-import { Sidebar } from "../ui/sidebar";
+
+const Drawer = dynamic(
+  () =>
+    import("../../components/ui/drawer").then((component) => component.Drawer),
+  { ssr: false }
+);
 
 interface Trade {
   open_price: number;
@@ -15,13 +21,14 @@ interface Trade {
 
 type Props = {
   isLoading?: boolean;
+  isOpened: boolean;
   createTrade: (trade: Trade) => void;
   onClose: () => void;
   workspaceId: string;
 };
 
 export function RegisterTrade(props: Props) {
-  const { isLoading, createTrade, onClose, workspaceId } = props;
+  const { isLoading, createTrade, onClose, isOpened, workspaceId } = props;
 
   const LongShortSelect = [
     { label: "Long", value: "BUY", index: "0" },
@@ -55,7 +62,12 @@ export function RegisterTrade(props: Props) {
   });
 
   return (
-    <Sidebar title="register trade" onClose={onClose}>
+    <Drawer
+      title="Register Trade"
+      placement="right"
+      onClose={onClose}
+      open={isOpened}
+    >
       <form onSubmit={formik.handleSubmit}>
         <TextField
           label="Symbol"
@@ -117,10 +129,11 @@ export function RegisterTrade(props: Props) {
           touched={formik.touched.side}
           error={formik.errors.side}
         />
+
         <Buttons position="right">
           <Button text="Create" isLoading={isLoading} />
         </Buttons>
       </form>
-    </Sidebar>
+    </Drawer>
   );
 }
