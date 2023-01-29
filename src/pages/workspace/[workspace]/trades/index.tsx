@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { message } from "antd";
 import styled from "styled-components";
 import Link from "next/link";
-import toast from "react-hot-toast";
 
 import { MainLayout } from "../../../../components/layouts";
 
@@ -63,7 +63,8 @@ const TableColumn = styled(Column)`
 `;
 
 const Index: NextPageWithLayout = () => {
-  const [isActiveCreateTrade, setIsActiveCreateTrade] = useState(false);
+  const [isActiveCreateTradeSidebar, setIsActiveCreateTradeSidebar] =
+    useState(false);
   const router = useRouter();
   const queryContext = trpc.useContext();
   const { workspace: workspaceParam } = router.query;
@@ -78,21 +79,21 @@ const Index: NextPageWithLayout = () => {
   const createTradeMutation = trpc.useMutation(["trade.create"], {
     onSuccess: () => {
       queryContext.invalidateQueries(["trade.list"]);
-      toast.success("Your trade was successfully created.");
+      message.success("Your trade was successfully created.");
     },
   });
   const removeTradeMutation = trpc.useMutation(["trade.remove"], {
     onSuccess: () => {
       queryContext.invalidateQueries(["trade.list"]);
-      toast.success("Trade was successfully removed.");
+      message.success("Trade was successfully removed.");
     },
     onError: () => {
-      toast.error("Could not remove trade, try again late.");
+      message.error("Could not remove trade, try again late.");
     },
   });
 
   const handleSidebarVisibility = () =>
-    setIsActiveCreateTrade(!isActiveCreateTrade);
+    setIsActiveCreateTradeSidebar(!isActiveCreateTradeSidebar);
   return (
     <>
       {!isLoadingTrades && (
@@ -121,7 +122,7 @@ const Index: NextPageWithLayout = () => {
                     <Button
                       text="Add Trade"
                       icon="fas fa-pen"
-                      color={isActiveCreateTrade ? "black" : "standard"}
+                      color="standard"
                       onClick={handleSidebarVisibility}
                     />
                   </Buttons>
@@ -171,6 +172,7 @@ const Index: NextPageWithLayout = () => {
                               onClick={() =>
                                 removeTradeMutation.mutate({ id: trade.id })
                               }
+                              isLoading={removeTradeMutation.isLoading}
                             />
                           </td>
                         </tr>
@@ -189,18 +191,13 @@ const Index: NextPageWithLayout = () => {
             )}
           </Column>
           {!!workspace?.id && (
-            <Column
-              visibility={!isActiveCreateTrade ? "hidden" : "visible"}
-              size="one-quarter"
-              style={{ borderLeft: "1px solid #dbdbdb" }}
-            >
-              <RegisterTradeSidebar
-                workspaceId={workspace?.id}
-                createTrade={createTradeMutation.mutate}
-                onClose={handleSidebarVisibility}
-                isLoading={createTradeMutation.isLoading}
-              />
-            </Column>
+            <RegisterTradeSidebar
+              workspaceId={workspace?.id}
+              createTrade={createTradeMutation.mutate}
+              onClose={handleSidebarVisibility}
+              isLoading={createTradeMutation.isLoading}
+              isOpened={isActiveCreateTradeSidebar}
+            />
           )}
         </Columns>
       )}
