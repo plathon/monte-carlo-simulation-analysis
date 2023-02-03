@@ -11,38 +11,46 @@ export const tradeRoutes = createProtectedRouter()
         prisma,
         session: { user },
       } = ctx;
-      return await prisma.workspace
-        .findFirst({
-          where: {
-            AND: [{ id: workspaceId }, { ownerId: user.id }],
+      return await prisma.workspace.findFirst({
+        where: {
+          AND: [{ id: workspaceId }, { ownerId: user.id }],
+        },
+        include: {
+          trades: {
+            include: {
+              symbol: true,
+            },
+            orderBy: {
+              id: "desc",
+            },
           },
-        })
-        .trades();
+        },
+      });
     },
   })
   .mutation("create", {
     input: z.object({
-      symbol: z.string().optional(),
+      symbol: z.string(),
       open_price: z.number(),
       close_price: z.number(),
       begin_at: z.date().optional(),
       end_at: z.date().optional(),
       side: z.enum(["BUY", "SELL"]),
-      workspace: z.string(),
+      workspace: z.string().cuid(),
     }),
     async resolve({ ctx, input }) {
       const {
         prisma,
         session: { user },
       } = ctx;
-      const { workspace, ...rest } = input;
+      const { workspace, symbol, ...rest } = input;
       const workspaceData = await prisma.workspace.findFirst({
         where: {
           AND: [{ id: workspace }, { ownerId: user.id }],
         },
       });
       if (workspaceData) {
-        return await prisma.trade.create({
+        const r = await prisma.trade.create({
           data: {
             ...rest,
             workspace: {
@@ -50,8 +58,14 @@ export const tradeRoutes = createProtectedRouter()
                 id: workspaceData.id,
               },
             },
+            symbol: {
+              connect: {
+                id: symbol,
+              },
+            },
           },
         });
+        return r;
       }
       return false;
     },
