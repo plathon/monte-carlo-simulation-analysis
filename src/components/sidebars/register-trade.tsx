@@ -1,10 +1,16 @@
 import dynamic from "next/dynamic";
+import moment from "moment";
 import { useFormik } from "formik";
-import { mixed, number, object } from "yup";
+import { string, number, object, date } from "yup";
+
 import { Button } from "../ui/Button";
 import { Buttons } from "../ui/buttons";
 import { TextField } from "../ui/field";
 import { Select } from "../ui/select";
+import { DatePicker } from "../ui/datepicker";
+
+import { Symbol } from "../../types/symbol";
+import { Trade } from "../../types/trade";
 
 const Drawer = dynamic(
   () =>
@@ -12,50 +18,67 @@ const Drawer = dynamic(
   { ssr: false }
 );
 
-interface Trade {
-  open_price: number;
-  close_price: number;
-  side: "BUY" | "SELL";
-  workspace: string;
-}
-
 type Props = {
   isLoading?: boolean;
   isOpened: boolean;
-  createTrade: (trade: Trade) => void;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  symbols: Symbol[];
+  isFetchingSymbols: boolean;
+  createTrade: (trade: Omit<Trade, "id">) => void;
   onClose: () => void;
   workspaceId: string;
 };
 
 export function RegisterTrade(props: Props) {
-  const { isLoading, createTrade, onClose, isOpened, workspaceId } = props;
+  const {
+    isLoading,
+    createTrade,
+    onClose,
+    isOpened,
+    workspaceId,
+    isFetchingSymbols,
+    symbols,
+  } = props;
 
   const LongShortSelect = [
     { label: "Long", value: "BUY", index: "0" },
     { label: "Short", value: "SELL", index: "1" },
   ];
 
+  const SymbolsSelect = symbols.map((symbol) => ({
+    label: symbol.name,
+    value: symbol.id,
+    index: symbol.id,
+  }));
+
   const formik = useFormik({
     initialValues: {
-      symbol: "",
+      symbol: SymbolsSelect[0]?.index ? SymbolsSelect[0]?.index : "",
       open_price: "",
       close_price: "",
       begin_at: "",
       end_at: "",
-      side: "BUY",
+      side: LongShortSelect[0]?.value ? LongShortSelect[0]?.value : "",
+      test: "",
     },
     validationSchema: object({
+      symbol: string().required(),
       open_price: number().required(),
       close_price: number().required(),
-      side: mixed().oneOf(["BUY", "SELL"]),
+      begin_at: date(),
+      end_at: date(),
+      side: string().oneOf(["BUY", "SELL"]).required(),
     }),
     onSubmit: (data, { resetForm }) => {
-      const { open_price, close_price, side } = data;
+      const { open_price, close_price, begin_at, end_at, side, ...rest } = data;
       createTrade({
         open_price: Number(open_price),
         close_price: Number(close_price),
-        side: side === "SELL" ? "SELL" : "BUY",
         workspace: workspaceId,
+        side: side === "SELL" ? "SELL" : "BUY",
+        begin_at: new Date(begin_at),
+        end_at: new Date(end_at),
+        ...rest,
       });
       resetForm();
     },
@@ -69,59 +92,81 @@ export function RegisterTrade(props: Props) {
       open={isOpened}
     >
       <form onSubmit={formik.handleSubmit}>
-        <TextField
+        <Select
           label="Symbol"
-          name="symbol"
-          placeholder="Ex: EURUSD"
-          onChange={formik.handleChange}
+          name="Symbol"
+          isLoading={isFetchingSymbols}
+          fullWidth={true}
+          onChange={(event) =>
+            formik.setFieldValue("symbol", event.target.value)
+          }
           onBlur={formik.handleBlur}
           value={formik.values.symbol}
-          error={formik.touched.symbol ? formik.errors.symbol : ""}
+          data={SymbolsSelect}
+          touched={formik.touched.symbol}
+          error={formik.errors.symbol}
         />
 
         <TextField
-          label="Open Price"
+          label="Open position price"
           name="open_price"
           placeholder="Ex: 1000.00"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.open_price}
           error={formik.touched.open_price ? formik.errors.open_price : ""}
+          autoComplete="off"
         />
 
         <TextField
-          label="Close Price"
+          label="Close position price"
           name="close_price"
           placeholder="Ex: 1000.50"
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.close_price}
           error={formik.touched.close_price ? formik.errors.close_price : ""}
+          autoComplete="off"
         />
 
-        <TextField
-          label="Open Datetime"
+        <DatePicker
+          label="Open position datetime"
           name="begin_at"
-          placeholder="Ex: 1000.50"
-          onChange={formik.handleChange}
+          size="large"
+          style={{ width: "100%", borderRadius: 5 }}
+          onChange={(value) =>
+            formik.setFieldValue("begin_at", value?.toString())
+          }
           onBlur={formik.handleBlur}
-          value={formik.values.begin_at}
+          value={
+            formik.values.begin_at
+              ? moment(new Date(formik.values.begin_at).toISOString())
+              : undefined
+          }
           error={formik.touched.begin_at ? formik.errors.begin_at : ""}
         />
 
-        <TextField
-          label="Close Datetime"
+        <DatePicker
+          label="Close position datetime"
           name="end_at"
-          placeholder="Ex: 1000.50"
-          onChange={formik.handleChange}
+          size="large"
+          style={{ width: "100%", borderRadius: 5 }}
+          onChange={(value) =>
+            formik.setFieldValue("end_at", value?.toString())
+          }
           onBlur={formik.handleBlur}
-          value={formik.values.end_at}
+          value={
+            formik.values.end_at
+              ? moment(new Date(formik.values.end_at).toISOString())
+              : undefined
+          }
           error={formik.touched.end_at ? formik.errors.end_at : ""}
         />
 
         <Select
           label="Side"
           name="side"
+          fullWidth={true}
           onChange={(event) => formik.setFieldValue("side", event.target.value)}
           onBlur={formik.handleBlur}
           value={formik.values.side}

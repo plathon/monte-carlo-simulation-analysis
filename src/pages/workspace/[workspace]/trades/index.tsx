@@ -15,6 +15,7 @@ import {
 } from "../../../../components/ui/breadcrumb";
 import { Button } from "../../../../components/ui/Button";
 import { Buttons } from "../../../../components/ui/buttons";
+import { Loading } from "../../../../components/ui/loading";
 
 import { Pagination } from "../../../../components/ui/pagination";
 
@@ -62,6 +63,11 @@ const TableColumn = styled(Column)`
   overflow-x: auto;
 `;
 
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
 const Index: NextPageWithLayout = () => {
   const [isActiveCreateTradeSidebar, setIsActiveCreateTradeSidebar] =
     useState(false);
@@ -72,10 +78,13 @@ const Index: NextPageWithLayout = () => {
   const workspace = workspaces?.find(
     (workspaceItem) => workspaceItem.name === workspaceParam
   );
-  const { isLoading: isLoadingTrades, data: tradeList } = trpc.useQuery([
+  const symbolsQuery = trpc.useQuery(["symbol.list"]);
+  const { data: symbols, isFetching: isFetchingSymbols } = symbolsQuery;
+  const { isLoading: isLoadingTrades, data: tradeListData } = trpc.useQuery([
     "trade.list",
     { workspace: workspace?.id },
   ]);
+  const tradeList = tradeListData ? tradeListData.trades : undefined;
   const createTradeMutation = trpc.useMutation(["trade.create"], {
     onSuccess: () => {
       queryContext.invalidateQueries(["trade.list"]);
@@ -94,8 +103,14 @@ const Index: NextPageWithLayout = () => {
 
   const handleSidebarVisibility = () =>
     setIsActiveCreateTradeSidebar(!isActiveCreateTradeSidebar);
+
   return (
     <>
+      {isLoadingTrades && (
+        <LoadingContainer>
+          <Loading isLoading={isLoadingTrades} />
+        </LoadingContainer>
+      )}
       {!isLoadingTrades && (
         <Columns>
           <Column>
@@ -159,7 +174,7 @@ const Index: NextPageWithLayout = () => {
                     <TableBody>
                       {tradeList?.map((trade) => (
                         <tr key={trade.id}>
-                          <td>{trade.symbol}</td>
+                          <td>{trade.symbol.name}</td>
                           <td>{trade.open_price.toString()}</td>
                           <td>{trade.close_price.toString()}</td>
                           <td>{trade.begin_at?.toDateString()}</td>
@@ -197,6 +212,8 @@ const Index: NextPageWithLayout = () => {
               onClose={handleSidebarVisibility}
               isLoading={createTradeMutation.isLoading}
               isOpened={isActiveCreateTradeSidebar}
+              isFetchingSymbols={isFetchingSymbols}
+              symbols={symbols || []}
             />
           )}
         </Columns>
